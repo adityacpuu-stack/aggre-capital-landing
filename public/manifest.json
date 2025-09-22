@@ -1,18 +1,29 @@
 {
-  "name": "AGGRE CAPITAL - Loan Solutions",
+  "name": "AGGRE CAPITAL - Solusi Pendanaan Terpercaya",
   "short_name": "AGGRE CAPITAL",
-  "description": "Solusi pendanaan terpercaya untuk berbagai kebutuhan Anda",
+  "description": "Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0d9488",
+  "theme_color": "#0f766e",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/images/logo.png",
-      "sizes": "120x40",
-      "type": "image/png"
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["finance", "business", "productivity"],
+  "lang": "id",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
 }
-
-
