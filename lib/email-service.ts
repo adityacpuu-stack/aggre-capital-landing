@@ -225,6 +225,35 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
   }
 }
 
+// Simple email sending function for testing
+export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+  // Skip email if EMAIL_DISABLED is set to true
+  if (process.env.EMAIL_DISABLED === 'true') {
+    console.log('Email notifications disabled. Skipping email send.')
+    return { success: true, messageId: 'disabled' }
+  }
+
+  try {
+    // Get working transporter
+    const transporter = await getWorkingTransporter()
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'noreply@aggrecapital.com',
+      to: to,
+      subject: subject,
+      html: html
+    }
+
+    const result = await transporter.sendMail(mailOptions)
+    console.log('Email sent successfully:', result.messageId)
+    return { success: true, messageId: result.messageId }
+
+  } catch (error) {
+    console.error('Failed to send email:', error)
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
 export async function sendCustomerConfirmation(data: ApplicationNotificationData) {
   // Skip email if EMAIL_DISABLED is set to true
   if (process.env.EMAIL_DISABLED === 'true') {

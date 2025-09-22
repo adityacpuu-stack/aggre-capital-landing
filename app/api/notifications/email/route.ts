@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { query } from '@/lib/database';
+import { sendEmail } from '@/lib/email-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,47 +13,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get SMTP settings from database
-    const smtpResult = await query(`
-      SELECT smtp_host, smtp_port, smtp_username, smtp_password, smtp_secure, from_email, from_name, reply_to
-      FROM smtp_settings 
-      WHERE id = 1
-    `);
-
-    if (smtpResult.rows.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'SMTP settings not configured. Please configure SMTP settings in dashboard first.' },
-        { status: 500 }
-      );
-    }
-
-    const smtpSettings = smtpResult.rows[0];
-
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: smtpSettings.smtp_host,
-      port: parseInt(smtpSettings.smtp_port),
-      secure: smtpSettings.smtp_secure === 'true',
-      auth: {
-        user: smtpSettings.smtp_username,
-        pass: smtpSettings.smtp_password,
-      },
-      tls: {
-        rejectUnauthorized: false
-      },
-      connectionTimeout: 15000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000
-    });
-
     // Professional email templates
     const getEmailTemplate = (status: string, customerName: string, applicationId: string) => {
-      const baseTemplate = {
-        from: `"${smtpSettings.from_name}" <${smtpSettings.from_email}>`,
-        to: email,
-        subject: `Status Pengajuan Kredit - ${applicationId}`,
-      };
-
       const currentDate = new Date().toLocaleDateString('id-ID', {
         weekday: 'long',
         year: 'numeric',
@@ -92,7 +52,7 @@ export async function POST(request: NextRequest) {
                   {TITLE}
                 </h2>
                 <p style="color: #6b7280; margin: 0; font-size: 14px;">
-                  {DATE}
+                  ${currentDate}
                 </p>
               </div>
 
@@ -115,7 +75,7 @@ export async function POST(request: NextRequest) {
               </div>
 
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://aggrecapital.com" style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                <a href="https://aggre-capital-landing.vercel.app" style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px;">
                   Kunjungi Website
                 </a>
               </div>
@@ -148,11 +108,9 @@ export async function POST(request: NextRequest) {
       switch (status) {
         case 'pending':
           return {
-            ...baseTemplate,
             subject: `✅ Pengajuan Kredit Diterima - ${applicationId}`,
             html: baseHTML
               .replace('{TITLE}', 'Pengajuan Kredit Diterima')
-              .replace('{DATE}', currentDate)
               .replace('{MESSAGE}', `Terima kasih telah mengajukan kredit di Aggre Capital. Pengajuan Anda telah diterima dan sedang dalam proses review oleh tim kami.`)
               .replace('{ADDITIONAL_INFO}', `
                 <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -168,11 +126,9 @@ export async function POST(request: NextRequest) {
 
         case 'approved':
           return {
-            ...baseTemplate,
             subject: `🎉 Selamat! Pengajuan Kredit Disetujui - ${applicationId}`,
             html: baseHTML
               .replace('{TITLE}', 'Selamat! Pengajuan Disetujui')
-              .replace('{DATE}', currentDate)
               .replace('{MESSAGE}', `Kabar baik! Pengajuan kredit Anda telah disetujui oleh tim review kami.`)
               .replace('{ADDITIONAL_INFO}', `
                 <div style="background-color: #d1fae5; border: 1px solid #10b981; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -188,11 +144,9 @@ export async function POST(request: NextRequest) {
 
         case 'rejected':
           return {
-            ...baseTemplate,
             subject: `Pengajuan Kredit - ${applicationId}`,
             html: baseHTML
               .replace('{TITLE}', 'Update Pengajuan Kredit')
-              .replace('{DATE}', currentDate)
               .replace('{MESSAGE}', `Terima kasih telah mengajukan kredit di Aggre Capital. Setelah review menyeluruh, pengajuan Anda belum dapat disetujui pada saat ini.`)
               .replace('{ADDITIONAL_INFO}', `
                 <div style="background-color: #fee2e2; border: 1px solid #ef4444; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -208,11 +162,9 @@ export async function POST(request: NextRequest) {
 
         default:
           return {
-            ...baseTemplate,
             subject: `Update Status Pengajuan - ${applicationId}`,
             html: baseHTML
               .replace('{TITLE}', 'Update Status Pengajuan')
-              .replace('{DATE}', currentDate)
               .replace('{MESSAGE}', `Status pengajuan kredit Anda telah diupdate menjadi <strong>${status}</strong>.`)
               .replace('{ADDITIONAL_INFO}', `
                 <div style="background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -230,16 +182,29 @@ export async function POST(request: NextRequest) {
 
     const emailTemplate = getEmailTemplate(status, customerName, applicationId);
 
-    // Send email
-    const info = await transporter.sendMail(emailTemplate);
-
-    // Email sent successfully
-
-    return NextResponse.json({
-      success: true,
-      message: 'Email notification sent successfully',
-      messageId: info.messageId
+    // Send email using the sendEmail function
+    const emailResult = await sendEmail({
+      to: email,
+      subject: emailTemplate.subject,
+      html: emailTemplate.html
     });
+
+    if (emailResult.success) {
+      return NextResponse.json({
+        success: true,
+        message: 'Email notification sent successfully',
+        messageId: emailResult.messageId
+      });
+    } else {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to send email notification',
+          details: emailResult.error
+        },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
     console.error('Email notification error:', error);
