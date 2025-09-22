@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
             <!-- Footer -->
             <div style="background-color: #f9fafb; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 12px;">
-                © 2024 Aggre Capital. All rights reserved.
+                © 2025 Aggre Capital. All rights reserved.
               </p>
               <p style="color: #9ca3af; margin: 0; font-size: 11px;">
                 Email ini dikirim secara otomatis. Mohon tidak membalas email ini.

@@ -203,7 +203,7 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
         
         <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
           <p>Email ini dikirim otomatis dari sistem AGGRE CAPITAL</p>
-          <p>© 2024 AGGRE CAPITAL. All rights reserved.</p>
+          <p>© 2025 AGGRE CAPITAL. All rights reserved.</p>
         </div>
       </div>
     `
@@ -346,8 +346,8 @@ export async function sendCustomerConfirmation(data: ApplicationNotificationData
         </div>
         
         <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
-          <p>© 2024 AGGRE CAPITAL. All rights reserved.</p>
-          <p>Jl. Sudirman No. 123, Jakarta Pusat, DKI Jakarta 12345</p>
+          <p>© 2025 AGGRE CAPITAL. All rights reserved.</p>
+          <p>Jl. Banjarsari I No.12, RT.1/RW.8, Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12430</p>
         </div>
       </div>
     `
