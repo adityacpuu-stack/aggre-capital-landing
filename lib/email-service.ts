@@ -238,7 +238,7 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
     const transporter = await getWorkingTransporter()
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'noreply@aggrecapital.com',
+      from: `"Aggre Capital" <${process.env.EMAIL_USER || 'support@pfigroup.id'}>`,
       to: to,
       subject: subject,
       html: html
