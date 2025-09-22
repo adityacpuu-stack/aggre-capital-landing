@@ -1,5 +1,8 @@
 import { Pool } from 'pg';
 
+// Disable SSL certificate verification for self-signed certificates
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 // Database connection pool with better error handling
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
