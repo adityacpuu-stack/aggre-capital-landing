@@ -153,7 +153,11 @@ export async function POST(request: NextRequest) {
 
     // Send email notification
     try {
-      const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/notifications/email`, {
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      
+      const emailResponse = await fetch(`${baseUrl}/api/notifications/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,9 +171,11 @@ export async function POST(request: NextRequest) {
       });
 
       if (emailResponse.ok) {
-        // Email notification sent successfully
+        const emailResult = await emailResponse.json();
+        console.log('Email notification sent successfully:', emailResult);
       } else {
-        // Failed to send email notification
+        const errorText = await emailResponse.text();
+        console.error('Failed to send email notification:', errorText);
       }
     } catch (emailError) {
       console.error('Email notification error:', emailError);
