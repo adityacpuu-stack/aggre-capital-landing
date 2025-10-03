@@ -10,7 +10,9 @@ import {
   Eye,
   User,
   CreditCard,
-  Calendar
+  Calendar,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 
 interface ApplicationsTabProps {
@@ -26,6 +28,8 @@ export default function ApplicationsTab({
 }: ApplicationsTabProps) {
   const router = useRouter()
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -51,6 +55,16 @@ export default function ApplicationsTab({
       default:
         return ['pending', 'reviewing', 'approved', 'rejected']
     }
+  }
+
+  // Pagination logic
+  const totalPages = Math.ceil(allApplications.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentApplications = allApplications.slice(startIndex, endIndex)
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
   }
 
   return (
@@ -90,7 +104,7 @@ export default function ApplicationsTab({
                 </tr>
               </thead>
               <tbody>
-                {allApplications.map((app, index) => (
+                {currentApplications.map((app, index) => (
                   <tr key={app.application_id || app.id} className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4 font-medium text-gray-900">{app.application_id}</td>
                     <td className="py-3 px-4 text-gray-700">{app.customer_name}</td>
@@ -137,6 +151,57 @@ export default function ApplicationsTab({
               </tbody>
             </table>
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-6 px-4">
+              <div className="text-sm text-gray-700">
+                Menampilkan {startIndex + 1} - {Math.min(endIndex, allApplications.length)} dari {allApplications.length} pengajuan
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center space-x-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Sebelumnya</span>
+                </Button>
+                
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(page)}
+                      className={`w-8 h-8 p-0 ${
+                        currentPage === page 
+                          ? 'bg-teal-600 hover:bg-teal-700 text-white' 
+                          : 'hover:bg-gray-100'
+                      }`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center space-x-1"
+                >
+                  <span>Selanjutnya</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
