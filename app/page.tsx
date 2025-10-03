@@ -25,6 +25,8 @@ import {
   Banknote,
   Timer,
   Award,
+  Menu,
+  X,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -60,6 +62,7 @@ interface StrategicPartner {
 export default function AggreCapitalLanding() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [strategicPartners, setStrategicPartners] = useState<StrategicPartner[]>([])
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -110,6 +113,8 @@ export default function AggreCapitalLanding() {
                 className="object-contain transition-all duration-300 group-hover:scale-105"
               />
             </div>
+            
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {[
                 { name: "Layanan", href: "#layanan" },
@@ -136,7 +141,46 @@ export default function AggreCapitalLanding() {
                 </Button>
               </Link>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden text-gray-300 hover:text-lime-400 transition-colors duration-300"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <nav className="md:hidden mt-4 pb-4 border-t border-gray-700">
+              <div className="flex flex-col space-y-4 pt-4">
+                {[
+                  { name: "Layanan", href: "#layanan" },
+                  { name: "Keunggulan", href: "#keunggulan" },
+                  { name: "Tim Kami", href: "/team" },
+                  { name: "News", href: "/news" },
+                  { name: "Testimoni", href: "/testimoni" },
+                  { name: "Kontak", href: "/kontak" }
+                ].map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-300 hover:text-lime-400 transition-colors duration-300 py-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                <Link href="/pengajuan" className="mt-4">
+                  <Button className="w-full bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-400 hover:to-lime-500 text-gray-900 font-semibold">
+                    <span>Ajukan Sekarang</span>
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          )}
         </div>
       </header>
 
@@ -152,15 +196,15 @@ export default function AggreCapitalLanding() {
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8 animate-fade-in-up">
-              <div className="space-y-6">
-                <Badge className="bg-gradient-to-r from-lime-500 to-lime-400 text-white px-6 py-3 text-sm font-semibold shadow-lg animate-bounce-subtle">
-                  <Zap className="w-4 h-4 mr-2" />
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="space-y-6 lg:space-y-8 animate-fade-in-up">
+              <div className="space-y-4 lg:space-y-6">
+                <Badge className="bg-gradient-to-r from-lime-500 to-lime-400 text-white px-4 lg:px-6 py-2 lg:py-3 text-xs lg:text-sm font-semibold shadow-lg animate-bounce-subtle">
+                  <Zap className="w-3 h-3 lg:w-4 lg:h-4 mr-2" />
                   FAST & RELIABLE
                 </Badge>
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                   <span className="block text-gray-900 animate-slide-in-left">Ajukan</span>
                   <span
                     className="block bg-gradient-to-r from-teal-700 via-teal-600 to-lime-600 bg-clip-text text-transparent animate-slide-in-right"
@@ -177,14 +221,14 @@ export default function AggreCapitalLanding() {
                 </h1>
 
                 <p
-                  className="text-xl md:text-2xl text-gray-600 leading-relaxed animate-fade-in"
+                  className="text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed animate-fade-in"
                   style={{ animationDelay: "0.6s" }}
                 >
                   Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan
                 </p>
 
                 {/* Feature Points */}
-                <div className="space-y-4">
+                <div className="space-y-3 lg:space-y-4">
                   {[
                     "Limit Pendanaan Besar Mulai Rp 100 juta",
                     "Proses Cepat dan Mudah!",
@@ -192,56 +236,56 @@ export default function AggreCapitalLanding() {
                   ].map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-4 animate-slide-in-right"
+                      className="flex items-center space-x-3 lg:space-x-4 animate-slide-in-right"
                       style={{ animationDelay: `${0.8 + index * 0.2}s` }}
                     >
-                      <div className="bg-gradient-to-r from-lime-500 to-lime-400 p-2 rounded-full shadow-lg">
-                        <CheckCircle className="h-5 w-5 text-white" />
+                      <div className="bg-gradient-to-r from-lime-500 to-lime-400 p-1.5 lg:p-2 rounded-full shadow-lg flex-shrink-0">
+                        <CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <p className="text-lg font-medium text-gray-700">{feature}</p>
+                      <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-700">{feature}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6 animate-fade-in-up" style={{ animationDelay: "1.4s" }}>
+              <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 animate-fade-in-up" style={{ animationDelay: "1.4s" }}>
                 <Link href="/pengajuan">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-lg px-10 py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
+                    className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-base lg:text-lg px-6 lg:px-10 py-3 lg:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
                   >
                     <span>Ajukan Pendanaan</span>
-                    <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-2" />
+                    <ArrowRight className="ml-2 lg:ml-3 h-4 w-4 lg:h-5 lg:w-5 transition-transform group-hover:translate-x-2" />
                   </Button>
                 </Link>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-2 border-teal-600 text-gray-900 hover:bg-teal-600 hover:text-white text-lg px-10 py-4 bg-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-bold"
+                  className="w-full sm:w-auto border-2 border-teal-600 text-gray-900 hover:bg-teal-600 hover:text-white text-base lg:text-lg px-6 lg:px-10 py-3 lg:py-4 bg-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-bold"
                 >
                   Konsultasi Gratis
                 </Button>
               </div>
             </div>
 
-            <div className="relative animate-fade-in-right" style={{ animationDelay: "0.8s" }}>
+            <div className="relative animate-fade-in-right mt-8 lg:mt-0" style={{ animationDelay: "0.8s" }}>
               <div className="relative z-10">
                 <Image
                   src="/images/landing.jpg"
                   alt="AGGRE CAPITAL Loan Services"
                   width={600}
                   height={500}
-                  className="rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500"
+                  className="w-full h-auto rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500"
                 />
                 {/* Floating Elements */}
-                <div className="absolute -top-6 -left-6 bg-gradient-to-r from-lime-400 to-lime-500 p-4 rounded-2xl shadow-xl animate-float">
-                  <TrendingUp className="h-8 w-8 text-white" />
+                <div className="absolute -top-3 -left-3 lg:-top-6 lg:-left-6 bg-gradient-to-r from-lime-400 to-lime-500 p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-xl animate-float">
+                  <TrendingUp className="h-4 w-4 lg:h-8 lg:w-8 text-white" />
                 </div>
                 <div
-                  className="absolute -bottom-6 -right-6 bg-gradient-to-r from-teal-500 to-teal-600 p-4 rounded-2xl shadow-xl animate-float"
+                  className="absolute -bottom-3 -right-3 lg:-bottom-6 lg:-right-6 bg-gradient-to-r from-teal-500 to-teal-600 p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-xl animate-float"
                   style={{ animationDelay: "1s" }}
                 >
-                  <Shield className="h-8 w-8 text-white" />
+                  <Shield className="h-4 w-4 lg:h-8 lg:w-8 text-white" />
                 </div>
               </div>
               {/* Background Glow */}
@@ -423,13 +467,13 @@ export default function AggreCapitalLanding() {
           {/* Plus-shaped Team Layout */}
           <div className="relative max-w-6xl mx-auto">
             {/* Main Plus Shape Container */}
-            <div className="relative bg-gradient-to-br from-lime-400 via-lime-300 to-lime-500 rounded-[4rem] p-12 shadow-2xl">
+            <div className="relative bg-gradient-to-br from-lime-400 via-lime-300 to-lime-500 rounded-2xl lg:rounded-[4rem] p-6 lg:p-12 shadow-2xl">
               
               {/* Team Photos Container */}
-              <div className="flex justify-center items-center space-x-16 mb-8">
+              <div className="flex flex-row justify-center items-center space-x-4 sm:space-x-8 lg:space-x-16 mb-8">
                 {/* Rian Photo */}
                 <div className="relative">
-                  <div className="w-48 h-64 rounded-3xl overflow-hidden shadow-xl ring-8 ring-white/30">
+                  <div className="w-28 h-36 sm:w-36 sm:h-48 lg:w-48 lg:h-64 rounded-2xl lg:rounded-3xl overflow-hidden shadow-xl ring-4 lg:ring-8 ring-white/30">
                     <Image
                       src="/images/rians.png"
                       alt="Rian - Founder & CEO"
@@ -440,9 +484,9 @@ export default function AggreCapitalLanding() {
                   </div>
                 </div>
                 
-                {/* Silverster Photo */}
+                {/* Silvester Photo */}
                 <div className="relative">
-                  <div className="w-48 h-64 rounded-3xl overflow-hidden shadow-xl ring-8 ring-white/30">
+                  <div className="w-28 h-36 sm:w-36 sm:h-48 lg:w-48 lg:h-64 rounded-2xl lg:rounded-3xl overflow-hidden shadow-xl ring-4 lg:ring-8 ring-white/30">
                     <Image
                       src="/images/adi.png"
                       alt="Silvester - CO-Founder & COO"
@@ -455,26 +499,26 @@ export default function AggreCapitalLanding() {
               </div>
 
               {/* Info Cards Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 {/* Rian Info Card */}
-                <div className="bg-lime-300/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Rian</h3>
-                  <p className="text-gray-800 font-medium mb-4">
+                <div className="bg-lime-300/50 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 shadow-lg">
+                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Rian</h3>
+                  <p className="text-sm lg:text-base text-gray-800 font-medium mb-4">
                     Lebih dari 10 tahun di Institusi Keuangan
                   </p>
-                  <div className="bg-white rounded-full px-6 py-2 inline-block shadow-md">
-                    <span className="text-gray-900 font-bold text-lg">FOUNDER</span>
+                  <div className="bg-white rounded-full px-4 lg:px-6 py-1.5 lg:py-2 inline-block shadow-md">
+                    <span className="text-gray-900 font-bold text-sm lg:text-lg">FOUNDER</span>
                   </div>
                 </div>
 
-                {/* Silverster Info Card */}
-                <div className="bg-lime-300/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Silvester</h3>
-                  <p className="text-gray-800 font-medium mb-4">
+                {/* Silvester Info Card */}
+                <div className="bg-lime-300/50 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 shadow-lg">
+                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Silvester</h3>
+                  <p className="text-sm lg:text-base text-gray-800 font-medium mb-4">
                     Lebih dari 10 tahun di Institusi Keuangan & Fintech
                   </p>
-                  <div className="bg-white rounded-full px-6 py-2 inline-block shadow-md">
-                    <span className="text-gray-900 font-bold text-lg">CO-FOUNDER</span>
+                  <div className="bg-white rounded-full px-4 lg:px-6 py-1.5 lg:py-2 inline-block shadow-md">
+                    <span className="text-gray-900 font-bold text-sm lg:text-lg">CO-FOUNDER</span>
                   </div>
                 </div>
               </div>
@@ -758,27 +802,27 @@ export default function AggreCapitalLanding() {
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
-            <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+          <div className="max-w-4xl mx-auto space-y-6 lg:space-y-8 animate-fade-in-up">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white leading-tight">
               Siap Mengajukan <span className="text-lime-400">Pendanaan?</span>
             </h2>
-            <p className="text-xl md:text-2xl text-teal-100 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-teal-100 leading-relaxed">
               Dapatkan solusi pendanaan terbaik untuk kebutuhan Anda. Proses cepat, aman, dan terpercaya.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+            <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center pt-6 lg:pt-8">
               <Link href="/pengajuan">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-lime-400 to-lime-500 text-teal-800 hover:from-lime-300 hover:to-lime-400 text-xl px-12 py-6 shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 group font-bold"
+                  className="w-full sm:w-auto bg-gradient-to-r from-lime-400 to-lime-500 text-teal-800 hover:from-lime-300 hover:to-lime-400 text-base sm:text-lg lg:text-xl px-8 lg:px-12 py-4 lg:py-6 shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 group font-bold"
                 >
                   <span>Ajukan Pendanaan Sekarang</span>
-                  <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  <ArrowRight className="ml-2 lg:ml-3 h-4 w-4 lg:h-6 lg:w-6 transition-transform group-hover:translate-x-2" />
                 </Button>
               </Link>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-lime-400 text-white hover:bg-lime-400 hover:text-teal-800 text-xl px-12 py-6 bg-white/30 backdrop-blur-sm shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 font-bold"
+                className="w-full sm:w-auto border-2 border-lime-400 text-white hover:bg-lime-400 hover:text-teal-800 text-base sm:text-lg lg:text-xl px-8 lg:px-12 py-4 lg:py-6 bg-white/30 backdrop-blur-sm shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 font-bold"
               >
                 Konsultasi Gratis
               </Button>
