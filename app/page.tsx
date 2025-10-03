@@ -445,7 +445,7 @@ export default function AggreCapitalLanding() {
                   <div className="w-48 h-64 rounded-3xl overflow-hidden shadow-xl ring-8 ring-white/30">
                     <Image
                       src="/images/adi.png"
-                      alt="Silverster - CO-Founder & COO"
+                      alt="Silvester - CO-Founder & COO"
                       width={300}
                       height={400}
                       className="w-full h-full object-cover object-[center_30%]"
@@ -469,7 +469,7 @@ export default function AggreCapitalLanding() {
 
                 {/* Silverster Info Card */}
                 <div className="bg-lime-300/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Silverster</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Silvester</h3>
                   <p className="text-gray-800 font-medium mb-4">
                     Lebih dari 10 tahun di Institusi Keuangan & Fintech
                   </p>

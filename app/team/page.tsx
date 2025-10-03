@@ -43,9 +43,9 @@ export default function TeamPage() {
     },
     {
       id: 2,
-      name: "Silverster",
+      name: "Silvester",
       role: "CO-Founder & COO", 
-      avatar: "/images/team-silverster.jpg",
+      avatar: "/images/team-silvester.jpg",
       description: "Ahli operasional dengan track record solid dalam membangun sistem dan proses yang efisien. Bertanggung jawab atas operasional harian dan memastikan kualitas layanan terbaik untuk setiap nasabah.",
       achievements: [
         "12+ Years Operations",
