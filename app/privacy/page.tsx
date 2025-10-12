@@ -433,14 +433,14 @@ export default function PrivacyPolicy() {
                               <Mail className="h-5 w-5 text-teal-600" />
                               <div>
                                 <p className="font-semibold">Email</p>
-                                <p className="text-gray-600">privacy@aggrercapital.com</p>
+                                <p className="text-gray-600">privacy@aggrecapital.com</p>
                               </div>
                             </div>
                             <div className="flex items-center space-x-3">
                               <Phone className="h-5 w-5 text-teal-600" />
                               <div>
                                 <p className="font-semibold">Telepon</p>
-                                <p className="text-gray-600">+62 21 1234 5678</p>
+                                <p className="text-gray-600">+62 21 3880 8101</p>
                               </div>
                             </div>
                           </div>

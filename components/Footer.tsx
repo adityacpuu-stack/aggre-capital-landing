@@ -155,8 +155,8 @@ export default function Footer() {
               {/* Contact Info */}
               <div className="space-y-4">
                 {[
-                  { icon: Mail, text: "corp@aggrercapital.com", href: "mailto:corp@aggrercapital.com" },
-                  { icon: Phone, text: "+62 21 1234 5678", href: "tel:+622112345678" },
+                  { icon: Mail, text: "corp@aggrecapital.com", href: "mailto:corp@aggrecapital.com" },
+                  { icon: Phone, text: "+62 21 3880 8101", href: "tel:+622138808101" },
                   { icon: MapPin, text: "Jakarta, Indonesia", href: "#" },
                   { icon: Clock, text: "Senin - Jumat: 08:00 - 17:00", href: "#" },
                 ].map((contact, index) => (

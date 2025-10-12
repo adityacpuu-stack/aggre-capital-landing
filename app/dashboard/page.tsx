@@ -134,8 +134,11 @@ export default function DashboardPage() {
 
   const fetchAllApplications = async () => {
     try {
-      const result = await apiClient.getApplications()
-      setAllApplications(Array.isArray(result.data) ? result.data : [])
+      const result = await apiClient.getApplications({ limit: 1000, status: 'all' })
+      const applications = Array.isArray(result.data) ? result.data : []
+      console.log('Fetched applications:', applications.length, 'items')
+      console.log('Sample statuses:', applications.slice(0, 5).map((app: any) => ({ id: app.application_id, status: app.status })))
+      setAllApplications(applications)
     } catch (error) {
       console.error('Failed to fetch applications:', error)
       setAllApplications([])
@@ -144,7 +147,7 @@ export default function DashboardPage() {
 
   const fetchAllNews = async () => {
     try {
-      const result = await apiClient.getNews({ status: 'all' })
+      const result = await apiClient.getNews({ status: 'all', limit: 1000 })
       setAllNews(Array.isArray(result.data) ? result.data : [])
     } catch (error) {
       console.error('Failed to fetch news:', error)
@@ -154,7 +157,7 @@ export default function DashboardPage() {
 
   const fetchAllTestimonials = async () => {
     try {
-      const result = await apiClient.getTestimonials()
+      const result = await apiClient.getTestimonials({ limit: 1000 })
       setAllTestimonials(Array.isArray(result.data) ? result.data : [])
     } catch (error) {
       console.error('Failed to fetch testimonials:', error)
@@ -213,20 +216,30 @@ export default function DashboardPage() {
   // Application handlers
   const updateApplicationStatus = async (applicationId: string, newStatus: string) => {
     try {
+      console.log('Updating application:', applicationId, 'to status:', newStatus)
       const response = await fetch(`/api/applications/${applicationId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ status: newStatus }),
       })
 
+      const result = await response.json()
+      console.log('Update result:', result)
+
       if (response.ok) {
-        fetchAllApplications()
-        fetchDashboardData()
+        console.log('Update successful, refreshing data...')
+        await fetchAllApplications()
+        await fetchDashboardData()
+      } else {
+        console.error('Update failed:', result)
+        alert(`Gagal mengupdate status: ${result.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Failed to update application status:', error)
+      alert('Terjadi kesalahan saat mengupdate status')
     }
   }
 

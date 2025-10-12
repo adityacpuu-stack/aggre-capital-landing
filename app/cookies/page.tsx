@@ -521,8 +521,8 @@ export default function CookiePolicy() {
                         </p>
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                           <p className="text-blue-800 text-sm">
-                            <strong>Kontak:</strong> Jika Anda memiliki pertanyaan tentang kebijakan cookie ini, 
-                            silakan hubungi kami di privacy@aggrercapital.com
+                            <strong>Kontak:</strong> Jika Anda memiliki pertanyaan tentang kebijakan cookie ini,
+                            silakan hubungi kami di privacy@aggrecapital.com
                           </p>
                         </div>
                       </div>

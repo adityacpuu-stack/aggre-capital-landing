@@ -140,10 +140,9 @@ export default function KontakPage() {
                     {[
                       {
                         icon: Phone,
-                        title: "Telepon & WhatsApp",
+                        title: "Telepon",
                         content: [
-                          "Nomor telepon belum tersedia",
-                          "WhatsApp: Segera hadir"
+                          "Telepon: +62 21 3880 8101",
                         ],
                         color: "from-green-500 to-green-600"
                       },
@@ -151,7 +150,7 @@ export default function KontakPage() {
                         icon: Mail,
                         title: "Email",
                         content: [
-                          "corp@aggrercapital.com"
+                          "corp@aggrecapital.com"
                         ],
                         color: "from-blue-500 to-blue-600"
                       },

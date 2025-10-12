@@ -20,6 +20,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
 
+    console.log('GET /api/applications - Query params:', { status, type, page, limit })
+
     let whereClause = 'WHERE 1=1';
     const params: any[] = [];
     let paramCount = 0;
@@ -28,6 +30,9 @@ export async function GET(request: NextRequest) {
       paramCount++;
       whereClause += ` AND status = $${paramCount}`;
       params.push(status);
+      console.log('GET /api/applications - Filtering by status:', status)
+    } else {
+      console.log('GET /api/applications - No status filter applied (showing all)')
     }
 
     if (type) {
@@ -55,6 +60,14 @@ export async function GET(request: NextRequest) {
       ORDER BY created_at DESC
       LIMIT $${paramCount} OFFSET $${paramCount + 1}
     `, [...params, limit, offset]);
+
+    console.log('GET /api/applications - Retrieved:', applicationsResult.rows.length, 'applications')
+    console.log('GET /api/applications - Status distribution:', {
+      pending: applicationsResult.rows.filter(app => app.status === 'pending').length,
+      reviewing: applicationsResult.rows.filter(app => app.status === 'reviewing').length,
+      approved: applicationsResult.rows.filter(app => app.status === 'approved').length,
+      rejected: applicationsResult.rows.filter(app => app.status === 'rejected').length,
+    })
 
     return NextResponse.json({
       success: true,

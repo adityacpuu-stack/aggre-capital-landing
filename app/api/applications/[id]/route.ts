@@ -68,6 +68,8 @@ export async function PATCH(
     const body = await request.json();
     const { status } = body;
 
+    console.log('PATCH /api/applications/[id] - Received:', { id, status });
+
     // Validate status
     const validStatuses = ['pending', 'reviewing', 'approved', 'rejected', 'under_review'];
     if (status && !validStatuses.includes(status)) {
@@ -119,6 +121,7 @@ export async function PATCH(
     }
 
     // Update application
+    console.log('PATCH /api/applications/[id] - Updating with:', { status, id })
     const result = await query(`
       UPDATE applications SET
         status = COALESCE($1, status),
@@ -127,13 +130,17 @@ export async function PATCH(
       RETURNING id, application_id, status, updated_at
     `, [status, id]);
 
+    console.log('PATCH /api/applications/[id] - Query result:', result.rows)
+
     if (result.rows.length === 0) {
+      console.log('PATCH /api/applications/[id] - Application not found:', id)
       return NextResponse.json(
         { success: false, error: 'Application not found' },
         { status: 404 }
       );
     }
 
+    console.log('PATCH /api/applications/[id] - Update successful:', result.rows[0])
     return NextResponse.json({
       success: true,
       data: result.rows[0],
