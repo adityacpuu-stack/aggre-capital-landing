@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
               </div>
 
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://aggre-capital-landing.vercel.app" style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                <a href="https://aggrecapital.com" style="display: inline-block; background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px;">
                   Kunjungi Website
                 </a>
               </div>

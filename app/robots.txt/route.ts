@@ -5,7 +5,7 @@ export async function GET() {
 Allow: /
 
 # Sitemap
-Sitemap: https://aggre-capital-landing.vercel.app/sitemap.xml
+Sitemap: https://aggrecapital.com/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /api/
