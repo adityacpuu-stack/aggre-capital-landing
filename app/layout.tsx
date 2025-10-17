@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
     template: '%s | AGGRE CAPITAL'
   },
-  description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta. Solusi pendanaan multiguna untuk modal usaha, renovasi rumah, dan kebutuhan lainnya.',
+  description: 'Pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan. Solusi modal usaha, renovasi, dan kebutuhan lainnya.',
   keywords: [
     'pendanaan',
     'pinjaman',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     locale: 'id_ID',
     url: 'https://aggrecapital.com',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
-    description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.',
+    description: 'Pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan. Solusi modal usaha, renovasi, dan kebutuhan lainnya.',
     siteName: 'AGGRE CAPITAL',
     images: [
       {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
-    description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.',
+    description: 'Pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan. Solusi modal usaha, renovasi, dan kebutuhan lainnya.',
     images: ['/images/landing.jpg'],
   },
   robots: {
