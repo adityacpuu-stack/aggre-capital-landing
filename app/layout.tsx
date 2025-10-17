@@ -2,6 +2,7 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import ChunkErrorBoundary from '@/components/ChunkErrorBoundary'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -101,6 +102,7 @@ html {
         <ChunkErrorBoundary>
           {children}
         </ChunkErrorBoundary>
+        <SpeedInsights />
       </body>
     </html>
   )
