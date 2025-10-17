@@ -271,7 +271,7 @@ export default function AggreCapitalLanding() {
             <div className="relative animate-fade-in-right mt-8 lg:mt-0" style={{ animationDelay: "0.8s" }}>
               <div className="relative z-10">
                 <Image
-                  src="/images/landing.jpg"
+                  src="/images/banner.jpg"
                   alt="AGGRE CAPITAL Loan Services"
                   width={600}
                   height={500}

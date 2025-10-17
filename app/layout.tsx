@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://aggre-capital-landing.vercel.app'),
+  metadataBase: new URL('https://aggrecapital.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'id_ID',
-    url: 'https://aggre-capital-landing.vercel.app',
+    url: 'https://aggrecapital.com',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
     description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.',
     siteName: 'AGGRE CAPITAL',
