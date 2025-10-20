@@ -56,6 +56,8 @@ export default function PengajuanPage() {
         alamatDebitur: 'Alamat Debitur',
         jenisPekerjaan: 'Jenis Pekerjaan',
         namaUsaha: 'Nama Usaha / Tempat Kerja',
+        namaPasangan: 'Nama Kontak Darurat',
+        nomorHPPasangan: 'Nomor Kontak Darurat',
         limitPengajuan: 'Limit Pengajuan',
         tujuanPeminjaman: 'Tujuan Peminjaman',
         alamatJaminan: 'Alamat Jaminan',
@@ -82,13 +84,15 @@ export default function PengajuanPage() {
       alamatDebitur: 'Alamat Debitur',
       jenisPekerjaan: 'Jenis Pekerjaan',
       namaUsaha: 'Nama Usaha / Tempat Kerja',
+      namaPasangan: 'Nama Emergency Kontak',
+      nomorHPPasangan: 'Nomor Emergency Kontak',
       limitPengajuan: 'Limit Pengajuan',
       tujuanPeminjaman: 'Tujuan Peminjaman',
       alamatJaminan: 'Alamat Jaminan',
       asetDijaminkan: 'Aset Dijaminkan',
       asetAtasNama: 'Aset Dijaminkan atasnama'
     }
-    
+
     return missingFields.includes(fieldMap[fieldName])
   }
 
@@ -107,6 +111,8 @@ export default function PengajuanPage() {
     if (!formData.alamatDebitur) missingFields.push('Alamat Debitur')
     if (!formData.jenisPekerjaan) missingFields.push('Jenis Pekerjaan')
     if (!formData.namaUsaha) missingFields.push('Nama Usaha / Tempat Kerja')
+    if (!formData.namaPasangan) missingFields.push('Nama Emergency Kontak')
+    if (!formData.nomorHPPasangan) missingFields.push('Nomor Emergency Kontak')
     if (!formData.limitPengajuan) missingFields.push('Limit Pengajuan')
     if (!formData.tujuanPeminjaman) missingFields.push('Tujuan Peminjaman')
     if (!formData.alamatJaminan) missingFields.push('Alamat Jaminan')
@@ -468,38 +474,40 @@ export default function PengajuanPage() {
               </CardContent>
             </Card>
 
-            {/* Data Pasangan */}
+            {/* Kontak Darurat */}
             <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-3">
                   <User className="h-6 w-6" />
-                  <span>Data Pasangan (Bila Menikah)</span>
+                  <span>Kontak Darurat</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="namaPasangan" className="text-sm font-semibold text-gray-700">
-                      Nama Pasangan Debitur
+                      Nama Kontak Darurat <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="namaPasangan"
                       value={formData.namaPasangan}
                       onChange={(e) => handleInputChange("namaPasangan", e.target.value)}
-                      className="mt-2"
-                      placeholder="Nama lengkap pasangan (jika menikah)"
+                      className={`mt-2 ${isFieldMissing('namaPasangan') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                      placeholder="Nama Kontak Darurat"
+                      required
                     />
                   </div>
                   <div>
                     <Label htmlFor="nomorHPPasangan" className="text-sm font-semibold text-gray-700">
-                      Nomor Handphone Pasangan
+                      Nomor Kontak Darurat <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="nomorHPPasangan"
                       value={formData.nomorHPPasangan}
                       onChange={(e) => handleInputChange("nomorHPPasangan", e.target.value)}
-                      className="mt-2"
+                      className={`mt-2 ${isFieldMissing('nomorHPPasangan') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                       placeholder="08xxxxxxxxxx"
+                      required
                     />
                   </div>
                 </div>
