@@ -1,0 +1,10 @@
+# Ignore files that cause infinite recompilation
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+node_modules/.cache
+.next/cache
+.env.local
+.env.*.local
