@@ -101,7 +101,7 @@ export default function AggreCapitalLanding() {
     <div className="flex flex-col min-h-screen bg-white overflow-x-hidden">
       <SEO seo={seoConfigs.home} />
       {/* Header */}
-      <header className="bg-gradient-to-br from-gray-900 to-gray-800 shadow-sm border-b transition-all duration-300">
+      <header className="bg-gradient-to-br from-gray-900 to-gray-800 shadow-sm border-b border-white/10 transition-all duration-300">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center group">
@@ -304,17 +304,21 @@ export default function AggreCapitalLanding() {
       </section>
 
       {/* Value Proposition */}
-      <section id="layanan" className="py-24 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-4">
+      <section id="layanan" className="py-24 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+        </div>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <span className="inline-block text-teal-600 font-semibold text-sm uppercase tracking-widest mb-4 bg-teal-50 px-4 py-2 rounded-full">Layanan Kami</span>
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
+            <span className="inline-block text-lime-400 font-semibold text-sm uppercase tracking-widest mb-4 bg-lime-400/10 border border-lime-400/20 px-4 py-2 rounded-full">Layanan Kami</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
               Dapatkan Dana dari{" "}
-              <span className="bg-gradient-to-r from-teal-600 to-lime-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-teal-400 to-lime-400 bg-clip-text text-transparent">
                 Propertimu
               </span>
             </h2>
-            <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
               AGGRE CAPITAL memberikan solusi untuk mengakses pendanaan dari properti dengan aman, cepat, dan nyaman
             </p>
           </div>
@@ -326,41 +330,41 @@ export default function AggreCapitalLanding() {
                 title: "Satu Pintu, Banyak Kemudahan",
                 description: "Layanan terintegrasi untuk semua kebutuhan pendanaan Anda",
                 color: "from-teal-500 to-teal-600",
-                accent: "border-teal-500",
+                accent: "border-t-teal-400",
               },
               {
                 icon: Banknote,
                 title: "Limit Sesuai Kebutuhanmu",
                 description: "Pinjaman mulai Rp100 juta sesuai dengan kebutuhan Anda",
                 color: "from-green-500 to-green-600",
-                accent: "border-green-500",
+                accent: "border-t-green-400",
               },
               {
                 icon: Timer,
                 title: "Proses Cepat",
                 description: "Persetujuan Maksimal 1 Minggu dengan proses yang efisien",
                 color: "from-orange-500 to-orange-600",
-                accent: "border-orange-500",
+                accent: "border-t-orange-400",
               },
               {
                 icon: Award,
                 title: "Penawaran Terbaik",
                 description: "Solusi pendanaan dengan terms dan kondisi terbaik",
                 color: "from-purple-500 to-purple-600",
-                accent: "border-purple-500",
+                accent: "border-t-purple-400",
               },
             ].map((item, index) => (
               <div
                 key={index}
-                className={`group p-8 rounded-2xl border border-gray-100 hover:border-transparent hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white border-t-4 ${item.accent}`}
+                className={`group p-8 rounded-2xl bg-white/5 border border-white/10 border-t-2 ${item.accent} hover:bg-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 backdrop-blur-sm`}
               >
                 <div className={`bg-gradient-to-br ${item.color} w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
                   <item.icon className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-teal-700 transition-colors duration-300">
+                <h3 className="text-lg font-bold text-white mb-3 group-hover:text-lime-400 transition-colors duration-300">
                   {item.title}
                 </h3>
-                <p className="text-gray-500 leading-relaxed text-sm">{item.description}</p>
+                <p className="text-gray-400 leading-relaxed text-sm">{item.description}</p>
               </div>
             ))}
           </div>
