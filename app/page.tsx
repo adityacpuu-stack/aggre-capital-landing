@@ -120,7 +120,7 @@ export default function AggreCapitalLanding() {
                 { name: "Layanan", href: "#layanan" },
                 { name: "Keunggulan", href: "#keunggulan" },
                 { name: "Tim Kami", href: "/team" },
-                { name: "News", href: "/news" },
+                { name: "FAQ", href: "/faq" },
                 { name: "Testimoni", href: "/testimoni" },
                 { name: "Kontak", href: "/kontak" }
               ].map((item, index) => (
@@ -159,7 +159,7 @@ export default function AggreCapitalLanding() {
                   { name: "Layanan", href: "#layanan" },
                   { name: "Keunggulan", href: "#keunggulan" },
                   { name: "Tim Kami", href: "/team" },
-                  { name: "News", href: "/news" },
+                  { name: "FAQ", href: "/faq" },
                   { name: "Testimoni", href: "/testimoni" },
                   { name: "Kontak", href: "/kontak" }
                 ].map((item) => (
@@ -706,7 +706,7 @@ export default function AggreCapitalLanding() {
                 <div className="text-center">
                   <div className="relative mb-6">
                     {partner.logo ? (
-                      <div className="relative w-28 h-28 mx-auto group-hover:scale-110 transition-all duration-300 bg-white/10 rounded-xl p-3">
+                      <div className="relative w-28 h-28 mx-auto group-hover:scale-110 transition-all duration-300">
                         <Image
                           src={partner.logo}
                           alt={`${partner.name} ${partner.subtitle} logo`}
