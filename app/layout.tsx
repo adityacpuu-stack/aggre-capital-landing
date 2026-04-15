@@ -2,6 +2,7 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import ChunkErrorBoundary from '@/components/ChunkErrorBoundary'
+import CookieConsent from '@/components/CookieConsent'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 
@@ -72,8 +73,32 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code',
+    google: 'kO1_CLCRAF-80wQ5YutuqW0S-hCxi0Kh1QHZ7bkDRWA',
   },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FinancialService',
+  name: 'AGGRE CAPITAL',
+  url: 'https://aggrecapital.com',
+  logo: 'https://aggrecapital.com/images/logo.png',
+  description: 'Solusi pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan.',
+  telephone: '+622138808101',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Jalan Iskandarsyah Raya No 1 A, Menara Sentraya Lantai 18, Melawai, Kec. Kebayoran Baru',
+    addressLocality: 'Jakarta Selatan',
+    postalCode: '12160',
+    addressRegion: 'DKI Jakarta',
+    addressCountry: 'ID',
+  },
+  areaServed: 'ID',
+  currenciesAccepted: 'IDR',
+  priceRange: 'Rp 100.000.000+',
+  sameAs: [
+    'https://www.instagram.com/aggrecapital',
+  ],
 }
 
 export default function RootLayout({
@@ -90,6 +115,10 @@ export default function RootLayout({
         <link rel="icon" href="/images/logo.ico" />
         <link rel="apple-touch-icon" href="/images/logo.png" />
         <link rel="manifest" href="/manifest.json" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
@@ -102,6 +131,7 @@ html {
         <ChunkErrorBoundary>
           {children}
         </ChunkErrorBoundary>
+        <CookieConsent />
         <SpeedInsights />
       </body>
     </html>
