@@ -41,11 +41,10 @@ export default function KontakPage() {
     setSubmitStatus('idle')
 
     try {
-      const response = await fetch('/api/notifications/email', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: 'contact',
           name: formData.nama,
           email: formData.email,
           phone: formData.nomor,

@@ -84,8 +84,8 @@ export default function PengajuanPage() {
       alamatDebitur: 'Alamat Debitur',
       jenisPekerjaan: 'Jenis Pekerjaan',
       namaUsaha: 'Nama Usaha / Tempat Kerja',
-      namaPasangan: 'Nama Emergency Kontak',
-      nomorHPPasangan: 'Nomor Emergency Kontak',
+      namaPasangan: 'Nama Kontak Darurat',
+      nomorHPPasangan: 'Nomor Kontak Darurat',
       limitPengajuan: 'Limit Pengajuan',
       tujuanPeminjaman: 'Tujuan Peminjaman',
       alamatJaminan: 'Alamat Jaminan',
@@ -111,8 +111,8 @@ export default function PengajuanPage() {
     if (!formData.alamatDebitur) missingFields.push('Alamat Debitur')
     if (!formData.jenisPekerjaan) missingFields.push('Jenis Pekerjaan')
     if (!formData.namaUsaha) missingFields.push('Nama Usaha / Tempat Kerja')
-    if (!formData.namaPasangan) missingFields.push('Nama Emergency Kontak')
-    if (!formData.nomorHPPasangan) missingFields.push('Nomor Emergency Kontak')
+    if (!formData.namaPasangan) missingFields.push('Nama Kontak Darurat')
+    if (!formData.nomorHPPasangan) missingFields.push('Nomor Kontak Darurat')
     if (!formData.limitPengajuan) missingFields.push('Limit Pengajuan')
     if (!formData.tujuanPeminjaman) missingFields.push('Tujuan Peminjaman')
     if (!formData.alamatJaminan) missingFields.push('Alamat Jaminan')
@@ -283,7 +283,7 @@ export default function PengajuanPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} noValidate className="space-y-8">
             {/* Data Pribadi */}
             <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-t-lg">

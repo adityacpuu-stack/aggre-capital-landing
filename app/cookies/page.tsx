@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import SEO from "@/components/SEO"
 import { seoConfigs } from "@/lib/seo"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+const COOKIE_PREFS_KEY = "cookiePreferences"
 import Link from "next/link"
 
 export default function CookiePolicy() {
@@ -17,16 +19,36 @@ export default function CookiePolicy() {
     functional: false
   })
 
+  const [saved, setSaved] = useState(false)
+
+  // Muat preferensi yang tersimpan saat halaman dibuka.
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(COOKIE_PREFS_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        setCookiePreferences(prev => ({ ...prev, ...parsed, necessary: true }))
+      }
+    } catch {
+      // abaikan bila localStorage tidak tersedia
+    }
+  }, [])
+
   const handlePreferenceChange = (type: string, value: boolean) => {
     setCookiePreferences(prev => ({
       ...prev,
       [type]: value
     }))
+    setSaved(false)
   }
 
   const savePreferences = () => {
-    // Simulate saving preferences
-    alert('Preferensi cookie telah disimpan!')
+    try {
+      localStorage.setItem(COOKIE_PREFS_KEY, JSON.stringify(cookiePreferences))
+      setSaved(true)
+    } catch {
+      // abaikan bila localStorage tidak tersedia
+    }
   }
 
   return (
@@ -407,7 +429,12 @@ export default function CookiePolicy() {
                             </div>
                           </div>
 
-                          <div className="flex justify-end mt-6">
+                          <div className="flex justify-end items-center gap-3 mt-6">
+                            {saved && (
+                              <span className="text-sm text-green-600 font-medium" role="status">
+                                Preferensi tersimpan
+                              </span>
+                            )}
                             <Button onClick={savePreferences} className="bg-teal-600 hover:bg-teal-700">
                               Simpan Preferensi
                             </Button>

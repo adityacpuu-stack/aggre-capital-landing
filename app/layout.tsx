@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     siteName: 'AGGRE CAPITAL',
     images: [
       {
-        url: '/images/landing.jpg',
+        url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
     description: 'Pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan. Solusi modal usaha, renovasi, dan kebutuhan lainnya.',
-    images: ['/images/landing.jpg'],
+    images: ['/images/og-image.jpg'],
   },
   robots: {
     index: true,

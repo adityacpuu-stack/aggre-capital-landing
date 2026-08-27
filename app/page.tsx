@@ -146,6 +146,8 @@ export default function AggreCapitalLanding() {
             <button
               className="md:hidden text-gray-300 hover:text-lime-400 transition-colors duration-300"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -245,12 +247,14 @@ export default function AggreCapitalLanding() {
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto border-2 border-white/20 text-white hover:bg-white/10 hover:border-white/40 text-base lg:text-lg px-8 py-4 backdrop-blur-sm transition-all duration-300 rounded-xl bg-white/5"
-                >
-                  Konsultasi Gratis
-                </Button>
+                <Link href="/kontak">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto border-2 border-white/20 text-white hover:bg-white/10 hover:border-white/40 text-base lg:text-lg px-8 py-4 backdrop-blur-sm transition-all duration-300 rounded-xl bg-white/5"
+                  >
+                    Konsultasi Gratis
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -483,7 +487,7 @@ export default function AggreCapitalLanding() {
                     alt="Rian - Founder"
                     width={300}
                     height={400}
-                    className="w-full h-full object-cover object-[center_25%] scale-110 group-hover:scale-115 transition-transform duration-500"
+                    className="w-full h-full object-cover object-[center_25%] scale-110 group-hover:scale-[1.15] transition-transform duration-500"
                   />
                 </div>
                 <div className="inline-block bg-gradient-to-r from-teal-400/20 to-lime-400/20 border border-teal-400/30 rounded-full px-5 py-1.5 mb-3">
@@ -568,7 +572,7 @@ export default function AggreCapitalLanding() {
                     <div className="relative mb-5">
                       <div className="w-24 h-24 rounded-full overflow-hidden ring-2 ring-teal-400/30 group-hover:ring-teal-400/60 transition-all duration-300">
                         <Image
-                          src={testimonial.avatar || "/images/default-avatar.jpg"}
+                          src={testimonial.avatar || "/placeholder-user.jpg"}
                           alt={`${testimonial.name} - ${testimonial.role}`}
                           width={96}
                           height={96}
@@ -773,13 +777,15 @@ export default function AggreCapitalLanding() {
                   <ArrowRight className="ml-2 lg:ml-3 h-4 w-4 lg:h-6 lg:w-6 transition-transform group-hover:translate-x-2" />
                 </Button>
               </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto border-2 border-lime-400 text-white hover:bg-lime-400 hover:text-teal-800 text-base sm:text-lg lg:text-xl px-8 lg:px-12 py-4 lg:py-6 bg-white/30 backdrop-blur-sm shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 font-bold"
-              >
-                Konsultasi Gratis
-              </Button>
+              <Link href="/kontak">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto border-2 border-lime-400 text-white hover:bg-lime-400 hover:text-teal-800 text-base sm:text-lg lg:text-xl px-8 lg:px-12 py-4 lg:py-6 bg-white/30 backdrop-blur-sm shadow-2xl hover:shadow-lime-500/25 transform hover:scale-105 transition-all duration-300 font-bold"
+                >
+                  Konsultasi Gratis
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

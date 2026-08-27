@@ -22,27 +22,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email
+    // Find user by email (ikut ambil is_active untuk cek status akun)
     const userResult = await query(
-      'SELECT id, email, password_hash, full_name, role FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, full_name, role, is_active FROM users WHERE email = $1',
       [email]
     );
 
-    if (userResult.rows.length === 0) {
+    const user = userResult.rows[0];
+
+    // Timing-safe: selalu jalankan bcrypt.compare, walau user tidak ditemukan,
+    // memakai hash dummy. Ini mencegah penyerang menebak email admin yang valid
+    // dari selisih waktu respons (bcrypt hanya jalan bila email ada).
+    const DUMMY_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8f6.0YqZ8p8m5Zzz8pZzZzZzZzZzZu';
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user?.password_hash || DUMMY_HASH
+    );
+
+    if (!user || !passwordMatches) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    const user = userResult.rows[0];
-
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    if (!isValidPassword) {
+    // Tolak akun yang dinonaktifkan.
+    if (user.is_active === false) {
       return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
+        { success: false, error: 'Akun Anda tidak aktif. Hubungi administrator.' },
+        { status: 403 }
       );
     }
 
@@ -89,12 +97,12 @@ export async function POST(request: NextRequest) {
       ]
     );
 
-    // Create response with session cookie
+    // Jangan kembalikan session id / token di body — cukup lewat cookie httpOnly.
+    // Mengembalikannya di JSON berisiko bocor ke log proxy/APM.
+    void token;
     const response = NextResponse.json({
       success: true,
       data: {
-        token,
-        sessionId,
         user: {
           id: user.id,
           email: user.email,
@@ -103,6 +111,9 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Jangan cache respons login (berisi konteks sesi).
+    response.headers.set('Cache-Control', 'no-store');
 
     // Set session cookie
     response.cookies.set('session_id', sessionId, {

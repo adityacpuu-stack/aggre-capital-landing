@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/database';
 import { authenticate } from '@/lib/auth-middleware';
 import { sendEmail } from '@/lib/email-service';
+import { escapeHtml, isValidEmail } from '@/lib/sanitize';
 
 export async function GET(request: NextRequest) {
   try {
@@ -123,6 +124,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!isValidEmail(email)) {
+      return NextResponse.json(
+        { success: false, error: 'Format email tidak valid' },
+        { status: 400 }
+      );
+    }
+
+    const jumlahPinjamanNum = Number(jumlahPinjaman);
+    if (!Number.isFinite(jumlahPinjamanNum) || jumlahPinjamanNum <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'Jumlah pinjaman tidak valid' },
+        { status: 400 }
+      );
+    }
+
     // Generate application ID: AGC-YYYYMMDD-XXXXXX
     const now = new Date();
     const year = now.getFullYear();
@@ -210,7 +226,7 @@ export async function POST(request: NextRequest) {
 
               <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                 <p style="color: #374151; margin: 0 0 15px 0; font-size: 16px; line-height: 1.6;">
-                  Halo <strong style="color: #1f2937;">${namaDebitur}</strong>,
+                  Halo <strong style="color: #1f2937;">${escapeHtml(namaDebitur)}</strong>,
                 </p>
                 <p style="color: #374151; margin: 0 0 15px 0; font-size: 16px; line-height: 1.6;">
                   Terima kasih telah mengajukan kredit di Aggre Capital. Pengajuan Anda telah diterima dan sedang dalam proses review oleh tim kami.
