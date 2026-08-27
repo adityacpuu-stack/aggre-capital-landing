@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { query } from '@/lib/database'
 
 // Primary SMTP configuration (GoDaddy) - WORKING CONFIG
 const primaryTransporter = nodemailer.createTransport({
@@ -226,31 +227,128 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
 }
 
 // Simple email sending function for testing
+// Konfigurasi SMTP efektif: baca dari tabel smtp_settings (yang diisi lewat
+// dashboard Settings), pakai environment variable sebagai cadangan. Di-cache
+// 60 detik supaya tidak query DB tiap kirim email.
+interface EffectiveSmtp {
+  enabled: boolean
+  source: 'db' | 'env'
+  host: string
+  port: number
+  secure: boolean
+  user?: string
+  pass?: string
+  fromName: string
+  fromEmail: string
+  replyTo?: string
+}
+
+let smtpCache: { at: number; cfg: EffectiveSmtp } | null = null
+
+async function getEffectiveSmtp(): Promise<EffectiveSmtp> {
+  if (smtpCache && Date.now() - smtpCache.at < 60000) return smtpCache.cfg
+
+  const envDisabled = process.env.EMAIL_DISABLED === 'true'
+  let cfg: EffectiveSmtp
+
+  let db: any = null
+  try {
+    const r = await query('SELECT * FROM smtp_settings ORDER BY id DESC LIMIT 1')
+    if (r.rows.length > 0) db = r.rows[0]
+  } catch (e) {
+    console.warn('smtp_settings tidak terbaca, pakai env:', (e as Error).message)
+  }
+
+  if (db) {
+    const port = Number(db.smtp_port) || Number(process.env.SMTP_PORT) || 587
+    cfg = {
+      enabled: db.enabled !== false && !envDisabled,
+      source: 'db',
+      host: db.smtp_host || process.env.SMTP_HOST || 'smtpout.secureserver.net',
+      port,
+      secure: db.smtp_secure === true || port === 465,
+      user: db.smtp_username || process.env.EMAIL_USER,
+      pass: db.smtp_password || process.env.EMAIL_PASSWORD,
+      fromName: db.from_name || 'Aggre Capital',
+      fromEmail: db.from_email || db.smtp_username || process.env.EMAIL_USER || 'noreply@aggrecapital.com',
+      replyTo: db.reply_to || undefined,
+    }
+  } else {
+    const port = Number(process.env.SMTP_PORT) || 465
+    cfg = {
+      enabled: !envDisabled,
+      source: 'env',
+      host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
+      port,
+      secure: port === 465,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+      fromName: 'Aggre Capital',
+      fromEmail: process.env.EMAIL_USER || 'noreply@aggrecapital.com',
+      replyTo: undefined,
+    }
+  }
+
+  smtpCache = { at: Date.now(), cfg }
+  return cfg
+}
+
+function buildTransporter(cfg: EffectiveSmtp): nodemailer.Transporter {
+  return nodemailer.createTransport({
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.secure,
+    auth: { user: cfg.user, pass: cfg.pass },
+    requireTLS: !cfg.secure,
+    tls: { rejectUnauthorized: process.env.NODE_ENV === 'production', minVersion: 'TLSv1.2' },
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+  })
+}
+
 export async function sendEmail({ to, subject, html, replyTo }: { to: string; subject: string; html: string; replyTo?: string }) {
-  // Skip email if EMAIL_DISABLED is set to true
-  if (process.env.EMAIL_DISABLED === 'true') {
-    console.log('Email notifications disabled. Skipping email send.')
+  const cfg = await getEffectiveSmtp()
+
+  // Hormati toggle "Enable SMTP" (dari DB) maupun env EMAIL_DISABLED.
+  if (!cfg.enabled) {
+    console.log('Email disabled (via dashboard/env). Skipping email send.')
     return { success: true, messageId: 'disabled' }
   }
 
+  const mailOptions: Record<string, unknown> = {
+    from: `"${cfg.fromName}" <${cfg.fromEmail}>`,
+    to,
+    subject,
+    html,
+  }
+  const effectiveReplyTo = replyTo || cfg.replyTo
+  if (effectiveReplyTo) mailOptions.replyTo = effectiveReplyTo
+
   try {
-    // Get working transporter
-    const transporter = await getWorkingTransporter()
-
-    const mailOptions: Record<string, unknown> = {
-      from: `"Aggre Capital" <${process.env.EMAIL_USER || 'noreply@aggrecapital.com'}>`,
-      to: to,
-      subject: subject,
-      html: html,
-    }
-    if (replyTo) mailOptions.replyTo = replyTo
-
-    const result = await transporter.sendMail(mailOptions)
-    console.log('Email sent successfully:', result.messageId)
+    const result = await buildTransporter(cfg).sendMail(mailOptions)
+    console.log(`Email sent (config: ${cfg.source}):`, result.messageId)
     return { success: true, messageId: result.messageId }
-
   } catch (error) {
-    console.error('Failed to send email:', error)
+    console.error(`Failed to send email (config: ${cfg.source}):`, error)
+    // Kalau config DB gagal, coba sekali lagi dengan config env sebagai jaring pengaman.
+    if (cfg.source === 'db') {
+      try {
+        const envPort = Number(process.env.SMTP_PORT) || 465
+        const envCfg: EffectiveSmtp = {
+          enabled: true, source: 'env',
+          host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
+          port: envPort, secure: envPort === 465,
+          user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASSWORD,
+          fromName: cfg.fromName, fromEmail: process.env.EMAIL_USER || cfg.fromEmail,
+        }
+        const result = await buildTransporter(envCfg).sendMail({ ...mailOptions, from: `"${envCfg.fromName}" <${envCfg.fromEmail}>` })
+        console.log('Email sent via env fallback:', result.messageId)
+        return { success: true, messageId: result.messageId }
+      } catch (e2) {
+        console.error('Env fallback juga gagal:', e2)
+      }
+    }
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
