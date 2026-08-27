@@ -22,11 +22,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email (ikut ambil is_active untuk cek status akun)
-    const userResult = await query(
-      'SELECT id, email, password_hash, full_name, role, is_active FROM users WHERE email = $1',
-      [email]
-    );
+    // Find user by email. Ikut ambil is_active bila kolomnya ada; sebagian DB
+    // belum punya kolom itu, jadi fallback ke query tanpa is_active agar login
+    // tidak error.
+    let userResult;
+    try {
+      userResult = await query(
+        'SELECT id, email, password_hash, full_name, role, is_active FROM users WHERE email = $1',
+        [email]
+      );
+    } catch {
+      userResult = await query(
+        'SELECT id, email, password_hash, full_name, role FROM users WHERE email = $1',
+        [email]
+      );
+    }
 
     const user = userResult.rows[0];
 
