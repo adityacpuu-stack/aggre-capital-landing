@@ -171,7 +171,7 @@ export default function KontakPage() {
                         icon: Phone,
                         title: "Telepon",
                         content: [
-                          "Telepon: +62 21 3880 8101",
+                          "Telepon: +62 21 27881921",
                         ],
                         color: "from-green-500 to-green-600"
                       },
