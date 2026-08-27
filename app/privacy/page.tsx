@@ -440,7 +440,7 @@ export default function PrivacyPolicy() {
                               <Phone className="h-5 w-5 text-teal-600" />
                               <div>
                                 <p className="font-semibold">Telepon</p>
-                                <p className="text-gray-600">+62 21 3880 8101</p>
+                                <p className="text-gray-600">+62 21 27881921</p>
                               </div>
                             </div>
                           </div>

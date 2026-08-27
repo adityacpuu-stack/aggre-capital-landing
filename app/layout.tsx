@@ -84,7 +84,7 @@ const jsonLd = {
   url: 'https://aggrecapital.com',
   logo: 'https://aggrecapital.com/images/logo.png',
   description: 'Solusi pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan.',
-  telephone: '+622138808101',
+  telephone: '+622127881921',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Jalan Iskandarsyah Raya No 1 A, Menara Sentraya Lantai 18, Melawai, Kec. Kebayoran Baru',

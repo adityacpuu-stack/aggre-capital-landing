@@ -2,14 +2,14 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Kontak Kami',
-  description: 'Hubungi AGGRE CAPITAL di Jakarta Selatan. Telepon +62 21 3880 8101. Konsultasi pendanaan multiguna, modal usaha, renovasi rumah, dan kebutuhan finansial lainnya.',
+  description: 'Hubungi AGGRE CAPITAL di Jakarta Selatan. Telepon +62 21 27881921. Konsultasi pendanaan multiguna, modal usaha, renovasi rumah, dan kebutuhan finansial lainnya.',
   keywords: ['kontak aggre capital', 'telepon aggre capital', 'alamat aggre capital', 'konsultasi pendanaan jakarta', 'hubungi aggre capital'],
   alternates: {
     canonical: '/kontak',
   },
   openGraph: {
     title: 'Kontak Kami - AGGRE CAPITAL',
-    description: 'Hubungi AGGRE CAPITAL di Jakarta Selatan. Telepon +62 21 3880 8101 untuk konsultasi pendanaan.',
+    description: 'Hubungi AGGRE CAPITAL di Jakarta Selatan. Telepon +62 21 27881921 untuk konsultasi pendanaan.',
     url: 'https://aggrecapital.com/kontak',
   },
 }

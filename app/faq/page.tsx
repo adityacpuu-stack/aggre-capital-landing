@@ -19,7 +19,7 @@ const faqs = [
       },
       {
         q: "Bagaimana cara mengajukan pendanaan?",
-        a: "Pengajuan bisa dilakukan secara online melalui halaman Pengajuan di website kami, atau langsung menghubungi tim AGGRE CAPITAL melalui telepon di +62 21 3880 8101. Tim kami akan memandu Anda melalui seluruh proses.",
+        a: "Pengajuan bisa dilakukan secara online melalui halaman Pengajuan di website kami, atau langsung menghubungi tim AGGRE CAPITAL melalui telepon di +62 21 27881921. Tim kami akan memandu Anda melalui seluruh proses.",
       },
       {
         q: "Apakah bisa mengajukan secara online?",
