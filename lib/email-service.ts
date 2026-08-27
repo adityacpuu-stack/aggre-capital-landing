@@ -194,7 +194,7 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
           </div>
 
           <div style="text-align: center; margin-top: 30px;">
-            <a href="${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost:3000/dashboard'}" 
+            <a href="${(process.env.NEXT_PUBLIC_DASHBOARD_URL && !process.env.NEXT_PUBLIC_DASHBOARD_URL.includes('localhost')) ? process.env.NEXT_PUBLIC_DASHBOARD_URL : 'https://aggrecapital.com/dashboard'}"
                style="background: #0f766e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
               📊 Lihat di Dashboard
             </a>
@@ -226,7 +226,7 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
 }
 
 // Simple email sending function for testing
-export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+export async function sendEmail({ to, subject, html, replyTo }: { to: string; subject: string; html: string; replyTo?: string }) {
   // Skip email if EMAIL_DISABLED is set to true
   if (process.env.EMAIL_DISABLED === 'true') {
     console.log('Email notifications disabled. Skipping email send.')
@@ -237,12 +237,13 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
     // Get working transporter
     const transporter = await getWorkingTransporter()
 
-    const mailOptions = {
+    const mailOptions: Record<string, unknown> = {
       from: `"Aggre Capital" <${process.env.EMAIL_USER || 'noreply@aggrecapital.com'}>`,
       to: to,
       subject: subject,
-      html: html
+      html: html,
     }
+    if (replyTo) mailOptions.replyTo = replyTo
 
     const result = await transporter.sendMail(mailOptions)
     console.log('Email sent successfully:', result.messageId)

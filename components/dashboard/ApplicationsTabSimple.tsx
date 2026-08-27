@@ -31,15 +31,6 @@ export default function ApplicationsTab({
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  // Debug: Log applications data
-  console.log('ApplicationsTabSimple - Total applications:', allApplications.length)
-  console.log('ApplicationsTabSimple - Status breakdown:', {
-    pending: allApplications.filter(app => app.status === 'pending').length,
-    reviewing: allApplications.filter(app => app.status === 'reviewing').length,
-    approved: allApplications.filter(app => app.status === 'approved').length,
-    rejected: allApplications.filter(app => app.status === 'rejected').length,
-  })
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'approved': return 'bg-green-100 text-green-800'
@@ -140,15 +131,9 @@ export default function ApplicationsTab({
                       <select
                         value={app.status}
                         onChange={async (e) => {
-                          console.log('Status change triggered:', {
-                            applicationId: app.application_id,
-                            oldStatus: app.status,
-                            newStatus: e.target.value
-                          })
                           setUpdatingStatus(app.application_id)
                           await onUpdateStatus(app.application_id, e.target.value)
                           setUpdatingStatus(null)
-                          console.log('Status update completed')
                         }}
                         disabled={updatingStatus === app.application_id}
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(app.status)} border-0 ${updatingStatus === app.application_id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}

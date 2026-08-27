@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/database';
 import { authenticate } from '@/lib/auth-middleware';
+import { isAllowedStatus, sendStatusEmail } from '@/lib/status-email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,29 +41,21 @@ export async function POST(request: NextRequest) {
 
     const application = updateResult.rows[0];
 
-    // Send email notification
-    try {
-      const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/notifications/email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    // Kirim notifikasi email langsung (tanpa HTTP internal) supaya tidak
+    // bergantung pada NEXT_PUBLIC_BASE_URL dan tetap jalan setelah endpoint
+    // notifikasi diproteksi auth.
+    if (application.email && isAllowedStatus(status)) {
+      try {
+        await sendStatusEmail({
           applicationId: application.application_id,
-          status: status,
+          status,
           email: application.email,
-          customerName: application.customer_name
-        })
-      });
-
-      if (emailResponse.ok) {
-        // Status update email notification sent successfully
-      } else {
-        // Failed to send status update email notification
+          customerName: application.customer_name,
+        });
+      } catch (emailError) {
+        console.error('Status update email notification error:', emailError);
+        // Jangan gagalkan update status jika email gagal.
       }
-    } catch (emailError) {
-      console.error('Status update email notification error:', emailError);
-      // Don't fail the status update if email fails
     }
 
     return NextResponse.json({

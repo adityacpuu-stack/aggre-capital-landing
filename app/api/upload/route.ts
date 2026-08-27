@@ -2,12 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import crypto from 'crypto';
+import { authenticate } from '@/lib/auth-middleware';
+
+// Deteksi tipe gambar dari magic bytes (bukan dari Content-Type kiriman client,
+// yang bisa dipalsukan). Mengembalikan ekstensi aman atau null.
+function sniffImageExt(buf: Buffer): 'jpg' | 'png' | 'gif' | 'webp' | null {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'jpg';
+  if (buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'png';
+  if (buf.length >= 6 && buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return 'gif';
+  if (buf.length >= 12 && buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return 'webp';
+  return null;
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // Wajib login — hanya admin yang boleh meng-upload.
+    const authResult = await authenticate(request);
+    if (!authResult.isAuthenticated) {
+      return authResult.response || NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const formData = await request.formData();
     const files = formData.getAll('file') as File[];
-    
+
     if (!files || files.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No files provided' },
@@ -15,71 +36,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate all files
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
-    for (const file of files) {
-      if (!allowedTypes.includes(file.type)) {
-        return NextResponse.json(
-          { success: false, error: `Invalid file type for ${file.name}. Only images are allowed.` },
-          { status: 400 }
-        );
-      }
-
-      if (file.size > maxSize) {
-        return NextResponse.json(
-          { success: false, error: `File ${file.name} is too large. Maximum size is 5MB.` },
-          { status: 400 }
-        );
-      }
+    // Batasi jumlah file per request agar tidak dipakai menghabiskan disk.
+    if (files.length > 10) {
+      return NextResponse.json(
+        { success: false, error: 'Maksimal 10 file per permintaan.' },
+        { status: 400 }
+      );
     }
 
-    // Create uploads directory if it doesn't exist
+    const maxSize = 5 * 1024 * 1024; // 5MB per file
+
     const uploadsDir = join(process.cwd(), 'public', 'uploads');
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true });
     }
 
-    // Process all files
     const uploadResults = [];
-    
-    for (const file of files) {
-      // Generate unique filename
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const fileExtension = file.name.split('.').pop();
-      const fileName = `${timestamp}-${randomString}.${fileExtension}`;
-      const filePath = join(uploadsDir, fileName);
 
-      // Convert file to buffer and save
+    for (const file of files) {
+      if (file.size > maxSize) {
+        return NextResponse.json(
+          { success: false, error: `File ${file.name} terlalu besar. Maksimal 5MB.` },
+          { status: 400 }
+        );
+      }
+
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      await writeFile(filePath, buffer);
 
-      // Add to results
+      // Tentukan ekstensi dari isi file, bukan dari nama/Content-Type kiriman.
+      const ext = sniffImageExt(buffer);
+      if (!ext) {
+        return NextResponse.json(
+          { success: false, error: `File ${file.name} bukan gambar yang valid (hanya JPG, PNG, GIF, WEBP).` },
+          { status: 400 }
+        );
+      }
+
+      // Nama file sepenuhnya di-generate server — tidak memakai nama kiriman.
+      const fileName = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}.${ext}`;
+      await writeFile(join(uploadsDir, fileName), buffer);
+
       uploadResults.push({
         originalName: file.name,
         url: `/uploads/${fileName}`,
-        size: file.size
+        size: file.size,
       });
     }
 
-    // Return results
     if (uploadResults.length === 1) {
       return NextResponse.json({
         success: true,
         url: uploadResults[0].url,
-        message: 'File uploaded successfully'
-      });
-    } else {
-      return NextResponse.json({
-        success: true,
-        files: uploadResults,
-        message: `${uploadResults.length} files uploaded successfully`
+        message: 'File uploaded successfully',
       });
     }
-
+    return NextResponse.json({
+      success: true,
+      files: uploadResults,
+      message: `${uploadResults.length} files uploaded successfully`,
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(

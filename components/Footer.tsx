@@ -80,16 +80,22 @@ export default function Footer() {
                 <h5 className="text-sm font-semibold text-white">Ikuti Kami</h5>
                 <div className="flex space-x-3">
                   {[
-                    { icon: Facebook, href: "#", color: "hover:text-blue-400" },
-                    { icon: Twitter, href: "#", color: "hover:text-blue-300" },
-                    { icon: Linkedin, href: "#", color: "hover:text-blue-500" },
-                    { icon: Instagram, href: "#", color: "hover:text-pink-400" },
-                    { icon: Youtube, href: "#", color: "hover:text-red-400" },
-                  ].map((social, index) => (
+                    { icon: Instagram, href: "https://www.instagram.com/aggrecapital", label: "Instagram", color: "hover:text-pink-400" },
+                    { icon: Facebook, href: "#", label: "Facebook", color: "hover:text-blue-400" },
+                    { icon: Twitter, href: "#", label: "Twitter", color: "hover:text-blue-300" },
+                    { icon: Linkedin, href: "#", label: "LinkedIn", color: "hover:text-blue-500" },
+                    { icon: Youtube, href: "#", label: "YouTube", color: "hover:text-red-400" },
+                  ]
+                    // Hanya tampilkan yang punya URL asli (bukan "#") supaya tidak ada link mati.
+                    .filter((social) => social.href !== "#")
+                    .map((social, index) => (
                     <Link
                       key={index}
                       href={social.href}
-                      className={`p-2 bg-gray-700 rounded-lg ${social.color} transition-all duration-300 hover:bg-gray-600 hover:scale-110`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-gray-700 rounded-lg ${social.color} transition-all duration-300 hover:bg-gray-600 hover:scale-110`}
                     >
                       <social.icon className="h-4 w-4" />
                     </Link>
@@ -128,13 +134,11 @@ export default function Footer() {
               <h4 className="text-xl font-bold text-white">Perusahaan</h4>
               <ul className="space-y-3">
                 {[
-                  { name: "Tentang Kami", href: "/about" },
                   { name: "Tim Kami", href: "/team" },
                   { name: "News & Updates", href: "/news" },
                   { name: "Testimoni", href: "/testimoni" },
                   { name: "Strategic Partner", href: "/partners" },
-                  { name: "Karir", href: "/careers" },
-                  { name: "Blog", href: "/blog" },
+                  { name: "FAQ", href: "/faq" },
                 ].map((item, index) => (
                   <li key={index}>
                     <Link
@@ -157,17 +161,21 @@ export default function Footer() {
                 {[
                   { icon: Mail, text: "corp@aggrecapital.com", href: "mailto:corp@aggrecapital.com" },
                   { icon: Phone, text: "+62 21 27881921", href: "tel:+622127881921" },
-                  { icon: MapPin, text: "Jakarta, Indonesia", href: "#" },
-                  { icon: Clock, text: "Senin - Jumat: 08:00 - 17:00", href: "#" },
+                  { icon: MapPin, text: "Jakarta, Indonesia", href: null },
+                  { icon: Clock, text: "Senin - Jumat: 08:00 - 17:00", href: null },
                 ].map((contact, index) => (
                   <div key={index} className="flex items-center space-x-3 group">
                     <contact.icon className="h-5 w-5 text-lime-400 group-hover:scale-110 transition-transform duration-300" />
-                    <Link
-                      href={contact.href}
-                      className="text-gray-300 group-hover:text-white transition-colors duration-300"
-                    >
-                      {contact.text}
-                    </Link>
+                    {contact.href ? (
+                      <Link
+                        href={contact.href}
+                        className="text-gray-300 group-hover:text-white transition-colors duration-300"
+                      >
+                        {contact.text}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-300">{contact.text}</span>
+                    )}
                   </div>
                 ))}
               </div>

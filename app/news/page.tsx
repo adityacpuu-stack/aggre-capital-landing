@@ -173,7 +173,7 @@ export default function NewsPage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full mx-auto mb-6"></div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Memuat Berita</h3>
+            <h1 className="text-xl font-semibold text-gray-900 mb-2">Memuat Berita</h1>
             <p className="text-gray-600">Mohon tunggu sebentar...</p>
           </div>
         </div>

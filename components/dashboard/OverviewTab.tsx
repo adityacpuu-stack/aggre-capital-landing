@@ -34,15 +34,15 @@ export default function OverviewTab({ dashboardData }: OverviewTabProps) {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {(dashboardData ? [
-          { title: 'Total Applications', value: dashboardData.totalApplications?.toLocaleString() || '0', icon: FileText, color: 'text-blue-600', change: '+12%' },
-          { title: 'Pending Applications', value: dashboardData.pendingApplications?.toLocaleString() || '0', icon: Clock, color: 'text-orange-600', change: '+8%' },
-          { title: 'Total Disbursed', value: `Rp ${((dashboardData.totalDisbursed || 0) / 1000000000).toFixed(1)}B`, icon: DollarSign, color: 'text-green-600', change: '+15%' },
-          { title: 'Approved Applications', value: dashboardData.approvedApplications?.toLocaleString() || '0', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
+          { title: 'Total Pengajuan', value: dashboardData.totalApplications?.toLocaleString() || '0', icon: FileText, color: 'text-blue-600', change: '+12%' },
+          { title: 'Pengajuan Tertunda', value: dashboardData.pendingApplications?.toLocaleString() || '0', icon: Clock, color: 'text-orange-600', change: '+8%' },
+          { title: 'Total Dicairkan', value: `Rp ${((dashboardData.totalDisbursed || 0) / 1000000000).toFixed(1)}B`, icon: DollarSign, color: 'text-green-600', change: '+15%' },
+          { title: 'Pengajuan Disetujui', value: dashboardData.approvedApplications?.toLocaleString() || '0', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
         ] : [
-          { title: 'Total Applications', value: '...', icon: FileText, color: 'text-blue-600', change: '+12%' },
-          { title: 'Pending Applications', value: '...', icon: Clock, color: 'text-orange-600', change: '+8%' },
-          { title: 'Total Disbursed', value: '...', icon: DollarSign, color: 'text-green-600', change: '+15%' },
-          { title: 'Approved Applications', value: '...', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
+          { title: 'Total Pengajuan', value: '...', icon: FileText, color: 'text-blue-600', change: '+12%' },
+          { title: 'Pengajuan Tertunda', value: '...', icon: Clock, color: 'text-orange-600', change: '+8%' },
+          { title: 'Total Dicairkan', value: '...', icon: DollarSign, color: 'text-green-600', change: '+15%' },
+          { title: 'Pengajuan Disetujui', value: '...', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
         ]).map((stat, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
@@ -50,7 +50,6 @@ export default function OverviewTab({ dashboardData }: OverviewTabProps) {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
                   <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <p className={`text-sm ${stat.color} mt-1`}>{stat.change} from last month</p>
                 </div>
                 <div className={`p-3 rounded-full bg-gray-100`}>
                   <stat.icon className={`h-6 w-6 ${stat.color}`} />
@@ -64,7 +63,7 @@ export default function OverviewTab({ dashboardData }: OverviewTabProps) {
       {/* Recent Applications */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Recent Applications</CardTitle>
+          <CardTitle>Pengajuan Terbaru</CardTitle>
           <div className="flex space-x-2">
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
@@ -82,11 +81,11 @@ export default function OverviewTab({ dashboardData }: OverviewTabProps) {
               <thead>
                 <tr className="border-b">
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Customer</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Amount</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Nasabah</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Jumlah</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,27 +119,27 @@ export default function OverviewTab({ dashboardData }: OverviewTabProps) {
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Aksi Cepat</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button className="w-full justify-start" variant="outline">
               <Plus className="h-4 w-4 mr-2" />
-              New Application
+              Pengajuan Baru
             </Button>
             <Button className="w-full justify-start" variant="outline">
               <FileText className="h-4 w-4 mr-2" />
-              View Applications
+              Lihat Pengajuan
             </Button>
             <Button className="w-full justify-start" variant="outline">
               <TrendingUp className="h-4 w-4 mr-2" />
-              View Reports
+              Lihat Laporan
             </Button>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>System Status</CardTitle>
+            <CardTitle>Status Sistem</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {[
