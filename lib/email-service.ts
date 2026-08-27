@@ -194,7 +194,7 @@ export async function sendApplicationNotification(data: ApplicationNotificationD
           </div>
 
           <div style="text-align: center; margin-top: 30px;">
-            <a href="${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost:3000/dashboard'}" 
+            <a href="${(process.env.NEXT_PUBLIC_DASHBOARD_URL && !process.env.NEXT_PUBLIC_DASHBOARD_URL.includes('localhost')) ? process.env.NEXT_PUBLIC_DASHBOARD_URL : 'https://aggrecapital.com/dashboard'}"
                style="background: #0f766e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
               📊 Lihat di Dashboard
             </a>
