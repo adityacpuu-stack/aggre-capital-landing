@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: ['/', '/pengajuan', '/team', '/news', '/testimoni', '/partners', '/kontak', '/privacy', '/terms', '/cookies', '/sitemap'],
-      disallow: ['/api/', '/dashboard/', '/login/', '/aplikasi/'],
+      disallow: ['/api/', '/dashboard', '/login', '/aplikasi/'],
     },
-    sitemap: 'https://aggrecapital.com/sitemap.xml',
+    sitemap: 'https://www.aggrecapital.com/sitemap.xml',
   }
 }

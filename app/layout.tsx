@@ -35,14 +35,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://aggrecapital.com'),
+  metadataBase: new URL('https://www.aggrecapital.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'id_ID',
-    url: 'https://aggrecapital.com',
+    url: 'https://www.aggrecapital.com',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
     description: 'Pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan. Solusi modal usaha, renovasi, dan kebutuhan lainnya.',
     siteName: 'AGGRE CAPITAL',
@@ -81,8 +81,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialService',
   name: 'AGGRE CAPITAL',
-  url: 'https://aggrecapital.com',
-  logo: 'https://aggrecapital.com/images/logo.png',
+  url: 'https://www.aggrecapital.com',
+  logo: 'https://www.aggrecapital.com/images/logo.png',
   description: 'Solusi pendanaan multiguna mulai Rp 100 juta. Proses cepat, balloon payment & installment 60 bulan.',
   telephone: '+622127881921',
   address: {

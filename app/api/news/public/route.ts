@@ -9,10 +9,19 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured') === 'true';
     const category = searchParams.get('category');
     const search = searchParams.get('search');
+    const slug = searchParams.get('slug');
 
     let whereClause = 'WHERE status = $1';
     const params: any[] = ['published'];
     let paramCount = 1;
+
+    // Filter berdasarkan slug (untuk halaman detail artikel). Tanpa ini,
+    // semua URL artikel menampilkan artikel yang sama (duplicate content).
+    if (slug) {
+      paramCount++;
+      whereClause += ` AND slug = $${paramCount}`;
+      params.push(slug);
+    }
 
     if (featured) {
       paramCount++;
