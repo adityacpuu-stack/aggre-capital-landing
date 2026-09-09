@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     // Get recent applications
     const recentApplicationsResult = await query(`
-      SELECT id, customer_name, email, phone, status, created_at
+      SELECT id, application_id, customer_name, amount, email, phone, status, created_at
       FROM applications
       ORDER BY created_at DESC
       LIMIT 5

@@ -1,19 +1,23 @@
-import type { Metadata } from 'next'
+import { createPageMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: 'Partner Strategis',
-  description: 'Ekosistem mitra strategis AGGRE CAPITAL — BPR, bank, dan lembaga keuangan terpercaya yang mendukung solusi pendanaan multiguna terbaik di Indonesia.',
-  keywords: ['partner aggre capital', 'mitra aggre capital', 'BPR partner fintech', 'ekosistem keuangan indonesia', 'kolaborasi pendanaan'],
-  alternates: {
-    canonical: '/partners',
-  },
-  openGraph: {
-    title: 'Partner Strategis - AGGRE CAPITAL',
-    description: 'Ekosistem mitra strategis AGGRE CAPITAL — BPR, bank, dan lembaga keuangan terpercaya di Indonesia.',
-    url: 'https://aggrecapital.com/partners',
-  },
-}
+export const metadata = createPageMetadata({
+  title: "Partner Strategis",
+  description:
+    "Ekosistem mitra strategis AGGRE CAPITAL — BPR, bank, dan lembaga keuangan terpercaya yang mendukung solusi pendanaan multiguna terbaik di Indonesia.",
+  path: "/partners",
+  keywords: [
+    "partner aggre capital",
+    "mitra aggre capital",
+    "BPR partner fintech",
+    "ekosistem keuangan indonesia",
+    "kolaborasi pendanaan",
+  ],
+});
 
-export default function PartnersLayout({ children }: { children: React.ReactNode }) {
-  return children
+export default function PartnersLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
 }

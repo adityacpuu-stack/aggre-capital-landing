@@ -440,7 +440,7 @@ type Application = z.infer<typeof applicationSchema>
 
 ### Required
 ```env
-DATABASE_URL=postgresql://user:pass@host:5432/db
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require
 EMAIL_USER=support@domain.com
 EMAIL_PASSWORD=xxxxxx
 ADMIN_EMAIL=admin@domain.com

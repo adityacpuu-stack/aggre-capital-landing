@@ -1,11 +1,16 @@
 // API Client for Next.js API Routes
-const API_BASE_URL = '/api';
+const API_BASE_URL = "/api";
 
 interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
+  notification?: {
+    channel: "email";
+    provider: "resend";
+    status: "accepted" | "failed" | "disabled" | "unknown";
+  };
   pagination?: {
     page: number;
     limit: number;
@@ -37,27 +42,27 @@ class ApiClient {
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
   }
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     // Get session token from cookie
     const sessionToken = this.getSessionToken();
-    
+
     const config: RequestInit = {
       ...options,
       headers: {
         ...this.defaultHeaders,
-        ...(sessionToken && { 'Authorization': `Session ${sessionToken}` }),
+        ...(sessionToken && { Authorization: `Session ${sessionToken}` }),
         ...options.headers,
       },
-      credentials: 'include', // Important for cookies
+      credentials: "include", // Important for cookies
     };
 
     try {
@@ -67,48 +72,49 @@ class ApiClient {
       if (!response.ok) {
         throw {
           success: false,
-          error: data.error || 'Request failed',
+          error: data.error || "Request failed",
           status: response.status,
         } as ApiError;
       }
 
       return data;
     } catch (error) {
-      console.error('API Request failed:', error);
-      console.error('Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
+      console.error("API Request failed:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : undefined,
         type: typeof error,
-        error: error
+        error: error,
       });
-      
+
       // Handle network errors
-      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
         throw {
           success: false,
-          error: 'Unable to connect to server. Please check your connection.',
+          error: "Unable to connect to server. Please check your connection.",
           status: 0,
         } as ApiError;
       }
-      
+
       // Handle JSON parsing errors
       if (error instanceof SyntaxError) {
         throw {
           success: false,
-          error: 'Invalid response from server',
+          error: "Invalid response from server",
           status: 0,
         } as ApiError;
       }
-      
+
       // Re-throw ApiError as is
-      if (error && typeof error === 'object' && 'success' in error) {
+      if (error && typeof error === "object" && "success" in error) {
         throw error;
       }
-      
+
       // Handle other errors
       throw {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
         status: 0,
       } as ApiError;
     }
@@ -121,40 +127,45 @@ class ApiClient {
   }
 
   // Authentication
-  async login(email: string, password: string): Promise<ApiResponse<LoginResponse>> {
-    return this.request<LoginResponse>('/auth/login', {
-      method: 'POST',
+  async login(
+    email: string,
+    password: string,
+  ): Promise<ApiResponse<LoginResponse>> {
+    return this.request<LoginResponse>("/auth/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
   }
 
   async logout() {
-    return this.request('/auth/logout', {
-      method: 'POST',
+    return this.request("/auth/logout", {
+      method: "POST",
     });
   }
 
-  async verifySession(): Promise<ApiResponse<{
-    user: {
-      id: number;
-      email: string;
-      role: string;
-    };
-    session: {
-      id: string;
-      expiresAt: string;
-      lastAccessed: string;
-    };
-  }>> {
-    return this.request('/auth/verify');
+  async verifySession(): Promise<
+    ApiResponse<{
+      user: {
+        id: number;
+        email: string;
+        role: string;
+      };
+      session: {
+        id: string;
+        expiresAt: string;
+        lastAccessed: string;
+      };
+    }>
+  > {
+    return this.request("/auth/verify");
   }
 
   // Partners
   async getPartners(params?: { type?: string; featured?: boolean }) {
     const query = new URLSearchParams();
-    if (params?.type) query.append('type', params.type);
-    if (params?.featured) query.append('featured', 'true');
-    
+    if (params?.type) query.append("type", params.type);
+    if (params?.featured) query.append("featured", "true");
+
     return this.request(`/partners?${query.toString()}`);
   }
 
@@ -167,29 +178,29 @@ class ApiClient {
   }
 
   async createStrategicPartner(data: any) {
-    return this.request('/partners/strategic', {
-      method: 'POST',
+    return this.request("/partners/strategic", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async createEcosystemPartner(data: any) {
-    return this.request('/partners/ecosystem', {
-      method: 'POST',
+    return this.request("/partners/ecosystem", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateStrategicPartner(id: string, data: any) {
     return this.request(`/partners/strategic/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteStrategicPartner(id: string) {
     return this.request(`/partners/strategic/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -202,12 +213,12 @@ class ApiClient {
     status?: string;
   }) {
     const query = new URLSearchParams();
-    if (params?.page) query.append('page', params.page.toString());
-    if (params?.limit) query.append('limit', params.limit.toString());
-    if (params?.featured) query.append('featured', 'true');
-    if (params?.category) query.append('category', params.category);
-    if (params?.status) query.append('status', params.status);
-    
+    if (params?.page) query.append("page", params.page.toString());
+    if (params?.limit) query.append("limit", params.limit.toString());
+    if (params?.featured) query.append("featured", "true");
+    if (params?.category) query.append("category", params.category);
+    if (params?.status) query.append("status", params.status);
+
     return this.request(`/news?${query.toString()}`);
   }
 
@@ -216,22 +227,22 @@ class ApiClient {
   }
 
   async createNews(data: any) {
-    return this.request('/news', {
-      method: 'POST',
+    return this.request("/news", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateNews(id: string, data: any) {
     return this.request(`/news/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteNews(id: string) {
     return this.request(`/news/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -243,11 +254,11 @@ class ApiClient {
     status?: string;
   }) {
     const query = new URLSearchParams();
-    if (params?.page) query.append('page', params.page.toString());
-    if (params?.limit) query.append('limit', params.limit.toString());
-    if (params?.featured) query.append('featured', 'true');
-    if (params?.status) query.append('status', params.status);
-    
+    if (params?.page) query.append("page", params.page.toString());
+    if (params?.limit) query.append("limit", params.limit.toString());
+    if (params?.featured) query.append("featured", "true");
+    if (params?.status) query.append("status", params.status);
+
     return this.request(`/testimonials?${query.toString()}`);
   }
 
@@ -256,34 +267,34 @@ class ApiClient {
   }
 
   async createTestimonial(data: any) {
-    return this.request('/testimonials', {
-      method: 'POST',
+    return this.request("/testimonials", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateTestimonial(id: string, data: any) {
     return this.request(`/testimonials/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteTestimonial(id: string) {
     return this.request(`/testimonials/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async approveTestimonial(id: string) {
     return this.request(`/testimonials/${id}/approve`, {
-      method: 'PATCH',
+      method: "PATCH",
     });
   }
 
   async rejectTestimonial(id: string) {
     return this.request(`/testimonials/${id}/reject`, {
-      method: 'PATCH',
+      method: "PATCH",
     });
   }
 
@@ -295,11 +306,11 @@ class ApiClient {
     type?: string;
   }) {
     const query = new URLSearchParams();
-    if (params?.page) query.append('page', params.page.toString());
-    if (params?.limit) query.append('limit', params.limit.toString());
-    if (params?.status) query.append('status', params.status);
-    if (params?.type) query.append('type', params.type);
-    
+    if (params?.page) query.append("page", params.page.toString());
+    if (params?.limit) query.append("limit", params.limit.toString());
+    if (params?.status) query.append("status", params.status);
+    if (params?.type) query.append("type", params.type);
+
     return this.request(`/applications?${query.toString()}`);
   }
 
@@ -308,36 +319,40 @@ class ApiClient {
   }
 
   async createApplication(data: any) {
-    return this.request('/applications', {
-      method: 'POST',
+    return this.request("/applications", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateApplication(id: string, data: any) {
     return this.request(`/applications/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async updateApplicationStatus(id: string, status: string, adminNotes?: string) {
+  async updateApplicationStatus(
+    id: string,
+    status: string,
+    adminNotes?: string,
+  ) {
     return this.request(`/applications/${id}/status`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ status, admin_notes: adminNotes }),
     });
   }
 
   async deleteApplication(id: string) {
     return this.request(`/applications/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Analytics
   async trackEvent(event: string, data?: any) {
-    return this.request('/analytics/track', {
-      method: 'POST',
+    return this.request("/analytics/track", {
+      method: "POST",
       body: JSON.stringify({ event, ...data }),
     });
   }
@@ -350,58 +365,61 @@ class ApiClient {
     group_by?: string;
   }) {
     const query = new URLSearchParams();
-    if (params?.start_date) query.append('start_date', params.start_date);
-    if (params?.end_date) query.append('end_date', params.end_date);
-    if (params?.event) query.append('event', params.event);
-    if (params?.category) query.append('category', params.category);
-    if (params?.group_by) query.append('group_by', params.group_by);
-    
+    if (params?.start_date) query.append("start_date", params.start_date);
+    if (params?.end_date) query.append("end_date", params.end_date);
+    if (params?.event) query.append("event", params.event);
+    if (params?.category) query.append("category", params.category);
+    if (params?.group_by) query.append("group_by", params.group_by);
+
     return this.request(`/analytics?${query.toString()}`);
   }
 
   async getDashboardAnalytics(period?: string) {
-    const query = period ? `?period=${period}` : '';
+    const query = period ? `?period=${period}` : "";
     return this.request(`/analytics/dashboard${query}`);
   }
 
   // Settings
   async getSettings(category?: string) {
-    const endpoint = category ? `/settings/${category}` : '/settings';
+    const endpoint = category ? `/settings/${category}` : "/settings";
     return this.request(endpoint);
   }
 
   async updateSettings(settings: Record<string, any>) {
-    return this.request('/settings', {
-      method: 'PUT',
+    return this.request("/settings", {
+      method: "PUT",
       body: JSON.stringify({ settings }),
     });
   }
 
   async getSMTPConfig() {
-    return this.request('/settings/smtp/config');
+    return this.request("/settings/smtp/config");
   }
 
   async updateSMTPConfig(config: any) {
-    return this.request('/settings/smtp/config', {
-      method: 'PUT',
+    return this.request("/settings/smtp/config", {
+      method: "PUT",
       body: JSON.stringify({ smtp_settings: config }),
     });
   }
 
   async testSMTP(config: any) {
-    return this.request('/settings/smtp/test', {
-      method: 'POST',
+    return this.request("/settings/smtp/test", {
+      method: "POST",
       body: JSON.stringify({ smtp_settings: config }),
     });
   }
 
   // Upload
-  async uploadFile(file: File, type: 'single' | 'multiple' | 'image' | 'document' = 'single') {
+  async uploadFile(
+    file: File,
+    type: "single" | "multiple" | "image" | "document" = "single",
+  ) {
     const formData = new FormData();
-    formData.append(type === 'single' ? 'file' : 'files', file);
+    formData.append(type === "single" ? "file" : "files", file);
 
     return this.request(`/upload/${type}`, {
-      method: 'POST',
+      method: "POST",
       headers: {}, // Let browser set Content-Type for FormData
       body: formData,
     });
@@ -409,10 +427,10 @@ class ApiClient {
 
   async uploadMultipleFiles(files: File[]) {
     const formData = new FormData();
-    files.forEach(file => formData.append('files', file));
+    files.forEach((file) => formData.append("files", file));
 
-    return this.request('/upload/multiple', {
-      method: 'POST',
+    return this.request("/upload/multiple", {
+      method: "POST",
       headers: {},
       body: formData,
     });
@@ -420,31 +438,31 @@ class ApiClient {
 
   async deleteFile(filename: string) {
     return this.request(`/upload/${filename}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async listFiles() {
-    return this.request('/upload');
+    return this.request("/upload");
   }
 
   // Dashboard
   async getDashboardStats() {
-    return this.request('/dashboard/stats');
+    return this.request("/dashboard/stats");
   }
 
   async getDashboardActivity(limit?: number) {
-    const query = limit ? `?limit=${limit}` : '';
+    const query = limit ? `?limit=${limit}` : "";
     return this.request(`/dashboard/activity${query}`);
   }
 
   async getDashboardCharts(period?: string) {
-    const query = period ? `?period=${period}` : '';
+    const query = period ? `?period=${period}` : "";
     return this.request(`/dashboard/charts${query}`);
   }
 
   async getSystemHealth() {
-    return this.request('/dashboard/health');
+    return this.request("/dashboard/health");
   }
 }
 

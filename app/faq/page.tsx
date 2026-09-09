@@ -1,9 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ArrowLeft, ChevronDown, HelpCircle, Phone, MessageSquare } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import PublicPage, { ContactBand } from "@/components/PublicPage";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import {
+  ArrowLeft,
+  ChevronDown,
+  HelpCircle,
+  Phone,
+  MessageSquare,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -19,7 +31,7 @@ const faqs = [
       },
       {
         q: "Bagaimana cara mengajukan pendanaan?",
-        a: "Pengajuan bisa dilakukan secara online melalui halaman Pengajuan di website kami, atau langsung menghubungi tim AGGRE CAPITAL melalui telepon di +62 21 27881921. Tim kami akan memandu Anda melalui seluruh proses.",
+        a: "Pengajuan bisa dilakukan secara online melalui halaman Pengajuan di website kami, atau langsung menghubungi tim AGGRE CAPITAL melalui telepon di +62 21 3880 8101. Tim kami akan memandu Anda melalui seluruh proses.",
       },
       {
         q: "Apakah bisa mengajukan secara online?",
@@ -86,161 +98,69 @@ const faqs = [
       },
     ],
   },
-]
+];
 
 export default function FAQPage() {
-  const [openItems, setOpenItems] = useState<Record<string, boolean>>({})
-
-  const toggle = (key: string) => {
-    setOpenItems(prev => ({ ...prev, [key]: !prev[key] }))
-  }
-
   return (
-    <>
+    <PublicPage
+      eyebrow="Pertanyaan umum"
+      title="Jawaban untuk langkah yang lebih pasti."
+      description="Kenali layanan, persyaratan, dan proses pengajuan sebelum memulai."
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: faqs.flatMap(cat =>
-              cat.items.map(item => ({
-                '@type': 'Question',
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.flatMap((group) =>
+              group.items.map((item) => ({
+                "@type": "Question",
                 name: item.q,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: item.a,
-                },
-              }))
+                acceptedAnswer: { "@type": "Answer", text: item.a },
+              })),
             ),
           }),
         }}
       />
-
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950">
-        {/* Background effects */}
-        <div className="fixed inset-0 opacity-[0.03] pointer-events-none">
-          <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+      <div className="ac-sidebar-layout">
+        <aside className="ac-aside">
+          <p className="ac-eyebrow">TOPIK PERTANYAAN</p>
+          <nav aria-label="Kategori FAQ">
+            {faqs.map((group, index) => (
+              <a key={group.category} href={"#faq-" + index}>
+                <span>0{index + 1}</span>
+                {group.category}
+              </a>
+            ))}
+          </nav>
+          <p>Belum menemukan jawaban?</p>
+          <Link href="/kontak" className="ac-text-link">
+            Hubungi tim kami ↗
+          </Link>
+        </aside>
+        <div className="ac-faq-groups">
+          {faqs.map((group, index) => (
+            <section
+              id={"faq-" + index}
+              key={group.category}
+              className="ac-faq-group"
+            >
+              <p className="ac-eyebrow">0{index + 1}</p>
+              <h2>{group.category}</h2>
+              <Accordion type="multiple">
+                {group.items.map((item, i) => (
+                  <AccordionItem value={String(i)} key={item.q}>
+                    <AccordionTrigger>{item.q}</AccordionTrigger>
+                    <AccordionContent>{item.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </section>
+          ))}
         </div>
-        <div className="fixed top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="fixed bottom-0 left-0 w-96 h-96 bg-lime-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Header */}
-        <header className="bg-gray-900/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center group">
-                <Image
-                  src="/images/logo.png"
-                  alt="AGGRE CAPITAL"
-                  width={120}
-                  height={40}
-                  className="object-contain transition-all duration-300 group-hover:scale-105"
-                />
-              </Link>
-              <Link
-                href="/"
-                className="flex items-center space-x-2 text-gray-400 hover:text-lime-400 transition-colors duration-300"
-              >
-                <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">Kembali ke Beranda</span>
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* Main */}
-        <main className="flex-1 container mx-auto px-4 py-16 relative z-10">
-          <div className="max-w-3xl mx-auto">
-
-            {/* Page Header */}
-            <div className="text-center mb-16">
-              <span className="inline-block text-xs font-bold tracking-widest text-lime-400 uppercase mb-4 bg-lime-400/10 px-4 py-2 rounded-full border border-lime-400/20">
-                PUSAT BANTUAN
-              </span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Pertanyaan yang{" "}
-                <span className="bg-gradient-to-r from-teal-400 to-lime-400 bg-clip-text text-transparent">
-                  Sering Ditanyakan
-                </span>
-              </h1>
-              <p className="text-xl text-gray-400">
-                Temukan jawaban atas pertanyaan umum seputar layanan pendanaan AGGRE CAPITAL.
-              </p>
-            </div>
-
-            {/* FAQ Categories */}
-            <div className="space-y-10">
-              {faqs.map((cat) => (
-                <section key={cat.category}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <HelpCircle className="h-5 w-5 text-teal-400 shrink-0" />
-                    <h2 className="text-lg font-semibold text-teal-400 uppercase tracking-wider">
-                      {cat.category}
-                    </h2>
-                  </div>
-
-                  <div className="space-y-3">
-                    {cat.items.map((item, i) => {
-                      const key = `${cat.category}-${i}`
-                      const isOpen = !!openItems[key]
-                      return (
-                        <div
-                          key={key}
-                          className="border border-white/10 rounded-xl bg-white/5 backdrop-blur-sm overflow-hidden"
-                        >
-                          <button
-                            onClick={() => toggle(key)}
-                            className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-white/5 transition-colors"
-                          >
-                            <span className="text-white font-medium leading-snug">{item.q}</span>
-                            <ChevronDown
-                              className={`h-5 w-5 text-teal-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                            />
-                          </button>
-                          {isOpen && (
-                            <div className="px-6 pb-5 text-gray-400 leading-relaxed border-t border-white/10 pt-4">
-                              {item.a}
-                            </div>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </section>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div className="mt-16 rounded-2xl border border-white/10 bg-gradient-to-br from-teal-500/10 to-lime-500/10 p-8 text-center">
-              <h3 className="text-xl font-bold text-white mb-2">Masih ada pertanyaan?</h3>
-              <p className="text-gray-400 mb-6">Tim kami siap membantu Anda 24/7.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/kontak"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl transition-colors"
-                >
-                  <Phone className="h-4 w-4" />
-                  Hubungi Kami
-                </Link>
-                <Link
-                  href="/pengajuan"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-lime-400/40 text-lime-400 hover:bg-lime-400/10 font-semibold rounded-xl transition-colors"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  Ajukan Sekarang
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-white/10 py-6 text-center text-gray-600 text-sm">
-          © {new Date().getFullYear()} AGGRE CAPITAL. All rights reserved.
-        </footer>
       </div>
-    </>
-  )
+      <ContactBand />
+    </PublicPage>
+  );
 }

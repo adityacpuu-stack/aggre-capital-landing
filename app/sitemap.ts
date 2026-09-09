@@ -1,45 +1,54 @@
-import { MetadataRoute } from 'next'
-import { query } from '@/lib/database'
+import { MetadataRoute } from "next";
+import { query } from "@/lib/database";
+import { SITE_URL } from "@/lib/site-metadata";
 
 // Regenerasi sitemap tiap jam supaya artikel berita baru ikut terindeks.
-export const revalidate = 3600
+export const revalidate = 3600;
 
-const baseUrl = 'https://www.aggrecapital.com'
+const baseUrl = SITE_URL;
 
-async function getNewsUrls(lastModified: Date): Promise<MetadataRoute.Sitemap> {
-  try {
-    const r = await query(
-      "SELECT slug, updated_at, created_at FROM news WHERE status = 'published' AND slug IS NOT NULL ORDER BY created_at DESC LIMIT 500"
-    )
-    return r.rows.map((n: any) => ({
-      url: `${baseUrl}/news/${n.slug}`,
-      lastModified: n.updated_at || n.created_at || lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }))
-  } catch {
-    return []
-  }
+async function getNewsUrls(): Promise<MetadataRoute.Sitemap> {
+  // Let database errors propagate so ISR retains the previous successful sitemap.
+  const result = await query(
+    "SELECT slug, updated_at, published_at, created_at FROM news WHERE status = 'published' AND slug IS NOT NULL AND TRIM(slug) <> '' ORDER BY created_at DESC",
+  );
+  const seen = new Set<string>();
+  return result.rows
+    .filter((row) => {
+      if (seen.has(row.slug)) return false;
+      seen.add(row.slug);
+      return true;
+    })
+    .map((row) => {
+      const changed = row.updated_at || row.published_at || row.created_at;
+      const date = changed ? new Date(changed) : null;
+      return {
+        url: baseUrl + "/news/" + encodeURIComponent(row.slug),
+        ...(date && !Number.isNaN(date.getTime())
+          ? { lastModified: date }
+          : {}),
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      };
+    });
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date()
-
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${baseUrl}/pengajuan`, lastModified, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/team`, lastModified, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/news`, lastModified, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/faq`, lastModified, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/testimoni`, lastModified, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/partners`, lastModified, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/kontak`, lastModified, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/privacy`, lastModified, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/cookies`, lastModified, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/sitemap`, lastModified, changeFrequency: 'monthly', priority: 0.4 },
-  ]
+    { url: baseUrl, changeFrequency: "weekly", priority: 1.0 },
+    { url: `${baseUrl}/pengajuan`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${baseUrl}/team`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${baseUrl}/news`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${baseUrl}/faq`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${baseUrl}/testimoni`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/partners`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/kontak`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${baseUrl}/terms`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${baseUrl}/cookies`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${baseUrl}/sitemap`, changeFrequency: "monthly", priority: 0.4 },
+  ];
 
-  const newsPages = await getNewsUrls(lastModified)
-  return [...staticPages, ...newsPages]
+  const newsPages = await getNewsUrls();
+  return [...staticPages, ...newsPages];
 }

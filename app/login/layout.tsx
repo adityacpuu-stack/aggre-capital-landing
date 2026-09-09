@@ -1,10 +1,11 @@
-import type { Metadata } from 'next'
+import { privatePageMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: 'Login | AGGRE CAPITAL',
-  robots: { index: false, follow: false },
-}
+export const metadata = privatePageMetadata("Login");
 
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  return children
+export default function PrivateLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
 }

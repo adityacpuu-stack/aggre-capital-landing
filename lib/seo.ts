@@ -1,17 +1,17 @@
 export const defaultSEO = {
   title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
   description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.',
-  canonical: 'https://aggrecapital.com',
+  canonical: 'https://www.aggrecapital.com',
   openGraph: {
     type: 'website',
     locale: 'id_ID',
-    url: 'https://aggrecapital.com',
+    url: 'https://www.aggrecapital.com',
     siteName: 'AGGRE CAPITAL',
     title: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',
     description: 'Proses Cepat dan Mudah! Bisa Balloon Payment & Installment 60 Bulan. Limit Pendanaan Besar Mulai Rp 100 juta.',
     images: [
       {
-        url: 'https://aggrecapital.com/images/og-image.jpg',
+        url: 'https://www.aggrecapital.com/images/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'AGGRE CAPITAL - Solusi Pendanaan Terpercaya',

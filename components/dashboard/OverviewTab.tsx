@@ -1,164 +1,211 @@
-"use client"
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { 
+"use client";
+import Link from "next/link";
+import {
   FileText,
   Clock,
-  DollarSign,
-  CheckCircle,
-  Filter,
-  Download,
+  Newspaper,
+  Building2,
+  ArrowUpRight,
   Plus,
-  TrendingUp
-} from "lucide-react"
-
-interface OverviewTabProps {
-  dashboardData: any
-}
-
-export default function OverviewTab({ dashboardData }: OverviewTabProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800'
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'reviewing': return 'bg-blue-100 text-blue-800'
-      case 'rejected': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+const statusLabels: Record<string, string> = {
+  pending: "Menunggu",
+  reviewing: "Ditinjau",
+  approved: "Disetujui",
+  rejected: "Ditolak",
+};
+export default function OverviewTab({
+  dashboardData,
+  onNavigate,
+}: {
+  dashboardData: any;
+  onNavigate: (tab: string) => void;
+}) {
+  const stats = [
+    {
+      label: "Total pengajuan",
+      value: dashboardData?.totalApplications,
+      icon: FileText,
+      tab: "applications",
+    },
+    {
+      label: "Menunggu ditinjau",
+      value: dashboardData?.pendingApplications,
+      icon: Clock,
+      tab: "applications",
+    },
+    {
+      label: "Artikel",
+      value: dashboardData?.totalNews,
+      icon: Newspaper,
+      tab: "news",
+    },
+    {
+      label: "Mitra strategis",
+      value: dashboardData?.totalStrategicPartners,
+      icon: Building2,
+      tab: "partners",
+    },
+  ];
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {(dashboardData ? [
-          { title: 'Total Pengajuan', value: dashboardData.totalApplications?.toLocaleString() || '0', icon: FileText, color: 'text-blue-600', change: '+12%' },
-          { title: 'Pengajuan Tertunda', value: dashboardData.pendingApplications?.toLocaleString() || '0', icon: Clock, color: 'text-orange-600', change: '+8%' },
-          { title: 'Total Dicairkan', value: `Rp ${((dashboardData.totalDisbursed || 0) / 1000000000).toFixed(1)}B`, icon: DollarSign, color: 'text-green-600', change: '+15%' },
-          { title: 'Pengajuan Disetujui', value: dashboardData.approvedApplications?.toLocaleString() || '0', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
-        ] : [
-          { title: 'Total Pengajuan', value: '...', icon: FileText, color: 'text-blue-600', change: '+12%' },
-          { title: 'Pengajuan Tertunda', value: '...', icon: Clock, color: 'text-orange-600', change: '+8%' },
-          { title: 'Total Dicairkan', value: '...', icon: DollarSign, color: 'text-green-600', change: '+15%' },
-          { title: 'Pengajuan Disetujui', value: '...', icon: CheckCircle, color: 'text-purple-600', change: '+3%' }
-        ]).map((stat, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-                <div className={`p-3 rounded-full bg-gray-100`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="admin-overview">
+      <div className="admin-stats">
+        {stats.map(({ label, value, icon: Icon, tab }) => (
+          <button
+            type="button"
+            onClick={() => onNavigate(tab)}
+            className="admin-stat"
+            key={label}
+          >
+            <div>
+              <span>{label}</span>
+              <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+            </div>
+            <strong>
+              {value == null ? "—" : Number(value).toLocaleString("id-ID")}
+            </strong>
+            <span>
+              Lihat data <ArrowUpRight size={16} aria-hidden="true" />
+            </span>
+          </button>
         ))}
       </div>
-
-      {/* Recent Applications */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Pengajuan Terbaru</CardTitle>
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+      <section className="admin-panel">
+        <div className="admin-panel-heading admin-panel-toolbar">
+          <div>
+            <h2>Pengajuan terbaru</h2>
+            <p>Aktivitas pengajuan yang masuk ke portal.</p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Nasabah</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Jumlah</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
+          <Button variant="outline" onClick={() => onNavigate("applications")}>
+            Semua pengajuan <ArrowUpRight size={16} aria-hidden="true" />
+          </Button>
+        </div>
+        <div className="admin-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID pengajuan</th>
+                <th>Nasabah</th>
+                <th>Jumlah</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th>
+                  <span className="sr-only">Detail</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(dashboardData?.recentApplications || []).map((app: any) => (
+                <tr key={app.application_id || app.id}>
+                  <td className="admin-table-id">
+                    {app.application_id || app.id}
+                  </td>
+                  <td>{app.customer_name || app.name}</td>
+                  <td>
+                    {Number.isFinite(Number(app.amount))
+                      ? new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(Number(app.amount))
+                      : app.amount}
+                  </td>
+                  <td>
+                    <span className={"admin-status admin-status-" + app.status}>
+                      {statusLabels[app.status] || app.status}
+                    </span>
+                  </td>
+                  <td>
+                    {app.created_at
+                      ? new Date(app.created_at).toLocaleDateString("id-ID")
+                      : app.date || "—"}
+                  </td>
+                  <td>
+                    <Link
+                      className="admin-row-link"
+                      href={
+                        "/pengajuan/" +
+                        encodeURIComponent(app.application_id || app.id)
+                      }
+                      aria-label={
+                        "Lihat pengajuan " + (app.application_id || app.id)
+                      }
+                    >
+                      <ArrowUpRight size={19} />
+                    </Link>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {(dashboardData?.recentApplications || []).map((app: any, index: number) => (
-                  <tr key={app.application_id || app.id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium text-gray-900">{app.application_id || app.id}</td>
-                    <td className="py-3 px-4 text-gray-700">{app.customer_name || app.name}</td>
-                    <td className="py-3 px-4 text-gray-700">{app.amount}</td>
-                    <td className="py-3 px-4">
-                      <Badge className={getStatusColor(app.status)}>
-                        {app.status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-gray-700">{app.date}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
-                          <FileText className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              ))}
+            </tbody>
+          </table>
+          {(!dashboardData || !dashboardData.recentApplications?.length) && (
+            <div className="admin-empty" role="status">
+              <FileText size={30} strokeWidth={1.3} aria-hidden="true" />
+              <h3>
+                {dashboardData
+                  ? "Belum ada pengajuan terbaru"
+                  : "Data belum tersedia"}
+              </h3>
+              <p>
+                {dashboardData
+                  ? "Pengajuan yang masuk akan ditampilkan di sini."
+                  : "Ringkasan akan ditampilkan setelah data berhasil dimuat."}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+      <div className="admin-overview-bottom">
+        <section className="admin-panel">
+          <div className="admin-panel-heading">
+            <h2>Akses cepat</h2>
+            <p>Lanjutkan pekerjaan Anda.</p>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Aksi Cepat</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Pengajuan Baru
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <FileText className="h-4 w-4 mr-2" />
-              Lihat Pengajuan
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Lihat Laporan
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Status Sistem</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { service: 'Database', status: 'Online', color: 'text-green-600' },
-              { service: 'API Services', status: 'Online', color: 'text-green-600' },
-              { service: 'Authentication', status: 'Online', color: 'text-green-600' }
-            ].map((service, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <span className="text-gray-700">{service.service}</span>
-                <Badge className={service.color === 'text-green-600' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                  {service.status}
-                </Badge>
-              </div>
+          <div className="admin-shortcuts">
+            <Link href="/pengajuan">
+              <Plus size={19} aria-hidden="true" />
+              <span>Form pengajuan</span>
+              <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+            <Link href="/dashboard/news?action=create">
+              <Newspaper size={19} aria-hidden="true" />
+              <span>Tulis artikel baru</span>
+              <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+            <button type="button" onClick={() => onNavigate("partners")}>
+              <Building2 size={19} aria-hidden="true" />
+              <span>Kelola mitra</span>
+              <ArrowUpRight size={17} aria-hidden="true" />
+            </button>
+          </div>
+        </section>
+        <section className="admin-panel">
+          <div className="admin-panel-heading">
+            <h2>Artikel terbaru</h2>
+            <p>Pembaruan konten perusahaan.</p>
+          </div>
+          <div className="admin-recent-news">
+            {(dashboardData?.recentNews || []).map((article: any) => (
+              <Link
+                key={article.id}
+                href={"/dashboard/news?edit=" + article.id}
+              >
+                <div>
+                  <span className="admin-meta">{article.status}</span>
+                  <h3>{article.title}</h3>
+                </div>
+                <ArrowUpRight size={17} aria-hidden="true" />
+              </Link>
             ))}
-          </CardContent>
-        </Card>
+            {!dashboardData?.recentNews?.length && (
+              <p className="admin-muted">
+                Belum ada artikel untuk ditampilkan.
+              </p>
+            )}
+          </div>
+        </section>
       </div>
     </div>
-  )
+  );
 }
-
-

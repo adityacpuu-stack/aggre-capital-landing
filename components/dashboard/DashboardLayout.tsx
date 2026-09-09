@@ -1,152 +1,181 @@
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { 
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
   LayoutDashboard,
-  Users,
   FileText,
   Newspaper,
   Star,
   Building2,
   Settings,
   LogOut,
-  Bell,
   Menu,
-  X
-} from "lucide-react"
-import Image from "next/image"
-
+  ArrowUpRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 interface DashboardLayoutProps {
-  children: React.ReactNode
-  activeTab: string
-  onTabChange: (tab: string) => void
-  userEmail: string
-  onLogout: () => void
+  children: React.ReactNode;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  userEmail: string;
+  onLogout: () => void;
 }
-
-const sidebarItems = [
-  { id: 'overview', name: 'Overview', icon: LayoutDashboard },
-  { id: 'applications', name: 'Applications', icon: FileText },
-  { id: 'news', name: 'News & Articles', icon: Newspaper },
-  { id: 'testimonials', name: 'Testimoni', icon: Star },
-  { id: 'partners', name: 'Strategic Partners', icon: Building2 },
-  { id: 'settings', name: 'Settings', icon: Settings },
-]
-
-export default function DashboardLayout({ 
-  children, 
-  activeTab, 
-  onTabChange, 
-  userEmail, 
-  onLogout 
+const items = [
+  {
+    id: "overview",
+    name: "Ringkasan",
+    icon: LayoutDashboard,
+    description: "Pantau pengajuan dan aktivitas portal.",
+  },
+  {
+    id: "applications",
+    name: "Pengajuan",
+    icon: FileText,
+    description: "Tinjau data nasabah dan kelola status pengajuan.",
+  },
+  {
+    id: "news",
+    name: "Berita & artikel",
+    icon: Newspaper,
+    description: "Kelola artikel, publikasi, dan pembaruan perusahaan.",
+  },
+  {
+    id: "testimonials",
+    name: "Testimoni",
+    icon: Star,
+    description: "Kelola cerita dan pengalaman nasabah.",
+  },
+  {
+    id: "partners",
+    name: "Mitra & ekosistem",
+    icon: Building2,
+    description: "Kelola profil mitra strategis dan ekosistem perusahaan.",
+  },
+  {
+    id: "settings",
+    name: "Pengaturan",
+    icon: Settings,
+    description: "Kelola konfigurasi email dan informasi akun.",
+  },
+];
+export default function DashboardLayout({
+  children,
+  activeTab,
+  onTabChange,
+  userEmail,
+  onLogout,
 }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+  const [open, setOpen] = useState(false);
+  const current = items.find((item) => item.id === activeTab) || items[0];
+  const sidebar = (
+    <>
+      <Link
+        href="/"
+        className="admin-brand"
+        aria-label="AGGRE CAPITAL — Beranda"
+      >
+        <Image
+          src="/images/logo.png"
+          alt="AGGRE CAPITAL"
+          width={145}
+          height={94}
+          priority
         />
-      )}
-
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-gray-900 to-gray-800 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
-          <Image
-            src="/images/logo.png"
-            alt="AGGRE CAPITAL"
-            width={120}
-            height={32}
-            className="object-contain filter brightness-0 invert"
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden text-gray-400 hover:text-white"
-            onClick={() => setSidebarOpen(false)}
+      </Link>
+      <p className="admin-sidebar-label">PORTAL MANAJEMEN</p>
+      <nav aria-label="Navigasi dashboard" className="admin-nav">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            aria-current={activeTab === item.id ? "page" : undefined}
+            onClick={() => {
+              onTabChange(item.id);
+              setOpen(false);
+            }}
           >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-        
-        <nav className="mt-8 px-4">
-          {sidebarItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className={`w-full justify-start mb-2 h-12 ${
-                activeTab === item.id 
-                  ? 'bg-teal-600 text-white hover:bg-teal-700' 
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
-              }`}
-              onClick={() => {
-                onTabChange(item.id)
-                setSidebarOpen(false)
-              }}
-            >
-              <item.icon className="h-5 w-5 mr-3" />
-              {item.name}
-            </Button>
-          ))}
-        </nav>
-        
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gray-800 rounded-lg p-4 mb-4">
-            <p className="text-sm text-gray-300">Logged in as</p>
-            <p className="text-white font-medium truncate">{userEmail}</p>
-          </div>
-          <div className="space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
-              onClick={onLogout}
-            >
-              <LogOut className="h-5 w-5 mr-3" />
-              Logout
-            </Button>
+            <item.icon size={19} strokeWidth={1.7} aria-hidden="true" />
+            {item.name}
+          </button>
+        ))}
+      </nav>
+      <div className="admin-sidebar-bottom">
+        <Link href="/" target="_blank" className="admin-view-site">
+          Lihat website <ArrowUpRight size={17} aria-hidden="true" />
+        </Link>
+        <div className="admin-account">
+          <span className="admin-avatar" aria-hidden="true">
+            {userEmail.charAt(0).toUpperCase() || "A"}
+          </span>
+          <div>
+            <small>Akun admin</small>
+            <p>{userEmail || "Portal manajemen"}</p>
           </div>
         </div>
+        <button type="button" className="admin-logout" onClick={onLogout}>
+          <LogOut size={18} aria-hidden="true" />
+          Keluar dari akun
+        </button>
       </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+    </>
+  );
+  return (
+    <div className="admin-shell">
+      <a href="#admin-content" className="ac-skip">
+        Lewati ke konten dashboard
+      </a>
+      <aside className="admin-sidebar">{sidebar}</aside>
+      <div className="admin-workspace">
+        <header className="admin-topbar">
+          <div className="admin-topbar-start">
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="admin-menu"
+                  aria-label="Buka navigasi dashboard"
+                >
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="admin-mobile-sidebar">
+                <SheetTitle className="sr-only">Navigasi dashboard</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Pilih bagian portal manajemen.
+                </SheetDescription>
+                {sidebar}
+              </SheetContent>
+            </Sheet>
+            <span>
+              Workspace <span className="admin-divider">/</span>{" "}
+              <strong>{current.name}</strong>
+            </span>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <div className="h-8 w-8 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-semibold">
-                {userEmail.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          </div>
+          <Link href="/" className="admin-top-link">
+            Website perusahaan <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
         </header>
-
-        {/* Dashboard Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main id="admin-content" className="admin-surface">
+          <div className="admin-page-heading">
+            <p className="admin-eyebrow">AGGRE CAPITAL / ADMIN</p>
+            <h1>{current.name}</h1>
+            <p>{current.description}</p>
+          </div>
           {children}
         </main>
+        <footer className="admin-workspace-footer">
+          AGGRE CAPITAL <span>Portal manajemen</span>
+        </footer>
       </div>
     </div>
-  )
+  );
 }
-
-

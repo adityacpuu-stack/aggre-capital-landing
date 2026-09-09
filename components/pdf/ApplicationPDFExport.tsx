@@ -107,35 +107,18 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
       const contentWidth = pageWidth - (margin * 2);
       let yPosition = 0;
 
-      // Helper function for section headers
-      const addSectionHeader = (title: string, y: number) => {
-        doc.setFillColor(sectionBg);
-        doc.rect(margin, y, contentWidth, 8, 'F');
-        doc.setDrawColor(borderColor);
-        doc.setLineWidth(0.3);
-        doc.rect(margin, y, contentWidth, 8, 'S');
-
-        doc.setTextColor(accentColor);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text(title, margin + 5, y + 5.5);
-
-        return y + 12;
+      // The background reaches the paper edges, while all footer text stays
+      // inside the page margins and away from the bottom edge.
+      const footerHeight = 35;
+      const footerTop = pageHeight - footerHeight;
+      const contentBottom = footerTop - 10;
+      const continuationTop = 30;
+      const newContentPage = () => {
+        doc.addPage();
+        yPosition = continuationTop;
       };
-
-      // Helper function for compact data rows
-      const addCompactDataRow = (label: string, value: string, x: number, y: number, width: number) => {
-        doc.setTextColor(textColor);
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text(label, x, y);
-
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(lightText);
-        const lines = doc.splitTextToSize(value || 'Tidak diisi', width - 50);
-        doc.text(lines, x + 45, y);
-
-        return y + Math.max(lines.length * 4, 6) + 2;
+      const ensureSpace = (height: number) => {
+        if (yPosition + height > contentBottom) newContentPage();
       };
 
       // Helper function for compact spacing
@@ -152,6 +135,64 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
         doc.text(title, margin + 5, y + 5);
 
         return y + 10;
+      };
+
+      // Lay out both columns together, including wrapped labels. A row must
+      // fit above the footer; unusually long rows continue on the next page.
+      const addDataSection = (title: string, left: string[][], right: string[][]) => {
+        const lineHeight = 4;
+        const labelWidth = 33;
+        const valueWidth = contentWidth / 2 - 10 - 35;
+        const measure = (field?: string[]) => {
+          if (!field?.[0]) return { label: [] as string[], value: [] as string[] };
+          doc.setFontSize(8);
+          doc.setFont('helvetica', 'bold');
+          const label: string[] = doc.splitTextToSize(field[0], labelWidth);
+          doc.setFont('helvetica', 'normal');
+          const value: string[] = doc.splitTextToSize(field[1] || 'Tidak diisi', valueWidth);
+          return { label, value };
+        };
+        const rows = Array.from({ length: Math.max(left.length, right.length) }, (_, i) => {
+          const cells = [measure(left[i]), measure(right[i])];
+          const lines = Math.max(1, ...cells.flatMap(cell => [cell.label.length, cell.value.length]));
+          return { cells, lines };
+        });
+        const sectionHeight = 10 + rows.reduce((height, row) => height + row.lines * lineHeight + 4, 0) + 8;
+        // Keep short sections together without leaving a nearly empty page
+        // when a section contains a very long address or description.
+        if (sectionHeight <= 90) ensureSpace(sectionHeight);
+        else ensureSpace(10 + Math.min(rows[0]?.lines || 1, 3) * lineHeight + 4);
+        yPosition = addCompactSection(title, yPosition);
+        for (const row of rows) {
+          const rowHeight = row.lines * lineHeight + 4;
+          if (rowHeight <= 70 && yPosition + rowHeight > contentBottom) {
+            newContentPage();
+            yPosition = addCompactSection(title + ' (lanjutan)', yPosition);
+          }
+          let offset = 0;
+          while (offset < row.lines) {
+            const capacity = Math.floor((contentBottom - yPosition - 4) / lineHeight);
+            if (capacity < 1) {
+              newContentPage();
+              yPosition = addCompactSection(title + ' (lanjutan)', yPosition);
+              continue;
+            }
+            const count = Math.min(capacity, row.lines - offset);
+            row.cells.forEach((cell, index) => {
+              const x = index === 0 ? margin + 5 : pageWidth / 2 + 5;
+              doc.setFontSize(8);
+              doc.setFont('helvetica', 'bold');
+              doc.setTextColor(textColor);
+              cell.label.slice(offset, offset + count).forEach((line, i) => doc.text(line, x, yPosition + i * lineHeight));
+              doc.setFont('helvetica', 'normal');
+              doc.setTextColor(lightText);
+              cell.value.slice(offset, offset + count).forEach((line, i) => doc.text(line, x + 35, yPosition + i * lineHeight));
+            });
+            yPosition += count * lineHeight + 4;
+            offset += count;
+          }
+        }
+        yPosition += 8;
       };
 
       // Header Section
@@ -198,154 +239,39 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
 
       yPosition += 12;
 
-      // Data Pribadi Section
-      yPosition = addCompactSection('INFORMASI PRIBADI', yPosition);
-
-      const personalDataLeft = [
+      addDataSection('INFORMASI PRIBADI', [
         ['Nama Lengkap', application.customer_name],
         ['Email', application.email],
         ['Nomor Telepon', application.phone],
         ['Nomor KTP', application.nomor_ktp],
         ['Alamat', application.alamat],
-      ];
-
-      const personalDataRight = [
+      ], [
         ['Tempat & Tanggal Lahir', application.tempat_tanggal_lahir],
         ['Nama Ibu Kandung', application.nama_ibu],
         ['Pendidikan Terakhir', application.pendidikan_terakhir],
-        ['', ''], // Empty for alignment
-        ['', ''], // Empty for alignment
-      ];
-
-      let leftY = yPosition;
-      let rightY = yPosition;
-
-      personalDataLeft.forEach(([label, value]) => {
-        if (label) {
-          leftY = addCompactDataRow(label, value, margin + 5, leftY, contentWidth / 2 - 10);
-        }
-      });
-
-      personalDataRight.forEach(([label, value]) => {
-        if (label) {
-          rightY = addCompactDataRow(label, value, pageWidth / 2 + 5, rightY, contentWidth / 2 - 10);
-        }
-      });
-
-      yPosition = Math.max(leftY, rightY) + 8;
-
-      // Data Pekerjaan Section
-      yPosition = addCompactSection('INFORMASI PEKERJAAN', yPosition);
-
-      const workDataLeft = [
+      ]);
+      addDataSection('INFORMASI PEKERJAAN', [
         ['Pekerjaan', application.pekerjaan],
         ['Nama Usaha / Tempat Kerja', application.tempat_kerja],
-      ];
-
-      const workDataRight = [
+      ], [
         ['Alamat Kantor / Usaha', application.alamat_kantor],
-        ['', ''], // Empty for alignment
-      ];
-
-      leftY = yPosition;
-      rightY = yPosition;
-
-      workDataLeft.forEach(([label, value]) => {
-        leftY = addCompactDataRow(label, value, margin + 5, leftY, contentWidth / 2 - 10);
-      });
-
-      workDataRight.forEach(([label, value]) => {
-        if (label) {
-          rightY = addCompactDataRow(label, value, pageWidth / 2 + 5, rightY, contentWidth / 2 - 10);
-        }
-      });
-
-      yPosition = Math.max(leftY, rightY) + 8;
-
-      // Data Pasangan Section
-      yPosition = addCompactSection('INFORMASI PASANGAN', yPosition);
-
-      const spouseDataLeft = [
+      ]);
+      addDataSection('INFORMASI PASANGAN', [
         ['Nama Pasangan', application.nama_istri],
-      ];
-
-      const spouseDataRight = [
+      ], [
         ['Nomor HP Pasangan', application.nomor_hp_pasangan],
-      ];
-
-      leftY = yPosition;
-      rightY = yPosition;
-
-      spouseDataLeft.forEach(([label, value]) => {
-        leftY = addCompactDataRow(label, value, margin + 5, leftY, contentWidth / 2 - 10);
-      });
-
-      spouseDataRight.forEach(([label, value]) => {
-        rightY = addCompactDataRow(label, value, pageWidth / 2 + 5, rightY, contentWidth / 2 - 10);
-      });
-
-      yPosition = Math.max(leftY, rightY) + 8;
-
-      // Data Pinjaman Section
-      yPosition = addCompactSection('DETAIL PINJAMAN', yPosition);
-
-      const loanDataLeft = [
+      ]);
+      addDataSection('DETAIL PINJAMAN', [
         ['Jumlah Pinjaman', formatCurrency(application.amount)],
-      ];
-
-      const loanDataRight = [
+      ], [
         ['Tujuan Penggunaan', application.purpose],
-      ];
-
-      leftY = yPosition;
-      rightY = yPosition;
-
-      loanDataLeft.forEach(([label, value]) => {
-        leftY = addCompactDataRow(label, value, margin + 5, leftY, contentWidth / 2 - 10);
-      });
-
-      loanDataRight.forEach(([label, value]) => {
-        rightY = addCompactDataRow(label, value, pageWidth / 2 + 5, rightY, contentWidth / 2 - 10);
-      });
-
-      yPosition = Math.max(leftY, rightY) + 8;
-
-      // Data Jaminan Section
-      yPosition = addCompactSection('INFORMASI JAMINAN', yPosition);
-
-      const collateralDataLeft = [
+      ]);
+      addDataSection('INFORMASI JAMINAN', [
         ['Jenis Jaminan', application.jenis_jaminan],
         ['Alamat Jaminan', application.alamat_jaminan],
-      ];
-
-      const collateralDataRight = [
+      ], [
         ['Aset atas nama', application.aset_atas_nama],
-        ['', ''], // Empty for alignment
-      ];
-
-      leftY = yPosition;
-      rightY = yPosition;
-
-      collateralDataLeft.forEach(([label, value]) => {
-        leftY = addCompactDataRow(label, value, margin + 5, leftY, contentWidth / 2 - 10);
-      });
-
-      collateralDataRight.forEach(([label, value]) => {
-        if (label) {
-          rightY = addCompactDataRow(label, value, pageWidth / 2 + 5, rightY, contentWidth / 2 - 10);
-        }
-      });
-
-      yPosition = Math.max(leftY, rightY) + 12;
-
-      // Check if we need a new page for agreement
-      if (yPosition > pageHeight - 120) {
-        doc.addPage();
-        yPosition = 30;
-      }
-
-      // Perjanjian Section
-      yPosition = addCompactSection('PERJANJIAN DAN PERSETUJUAN', yPosition);
+      ]);
 
       // Agreement text as separate paragraphs (like the form)
       const agreementTexts = [
@@ -355,38 +281,37 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
         'Saya setuju dikemudian hari tidak akan melakukan tuntutatan dalam bentuk apapun kepada Aggre Capital.'
       ];
 
-      agreementTexts.forEach((text, index) => {
-        // Split text to fit in available width with better utilization
-        const splitText = doc.splitTextToSize(text, pageWidth - 2 * margin - 10);
-        
-        // Add agreement text
+      // Keep the agreement and its consent box together when possible.
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      const agreementHeight = 10 + 40 + agreementTexts.reduce((height, text) =>
+        height + doc.splitTextToSize(text, contentWidth - 10).length * 4.5 + 6, 0);
+      ensureSpace(agreementHeight);
+      yPosition = addCompactSection('PERJANJIAN DAN PERSETUJUAN', yPosition);
+
+      agreementTexts.forEach((text) => {
+        // Measure with the same font settings used to render the paragraph.
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        const splitText: string[] = doc.splitTextToSize(text, contentWidth - 10);
+        const paragraphHeight = splitText.length * 4.5 + 6;
+        if (yPosition + paragraphHeight > contentBottom) {
+          newContentPage();
+          yPosition = addCompactSection('PERJANJIAN DAN PERSETUJUAN (lanjutan)', yPosition);
+        }
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
         doc.setTextColor(textColor);
-        
-        splitText.forEach((line: string, lineIndex: number) => {
-          if (yPosition > pageHeight - 60) {
-            // Add new page if not enough space
-            doc.addPage();
-            yPosition = 30;
-          }
-          
-          // Align text to left without excessive indentation
+        splitText.forEach((line) => {
           doc.text(line, margin + 5, yPosition);
           yPosition += 4.5;
         });
-        
-        yPosition += 6; // Space between paragraphs
+        yPosition += 6;
       });
 
-      // Signature section
+      // Keep the complete consent box above the footer.
+      ensureSpace(40);
       yPosition += 10;
-      
-      // Add new page if not enough space for signature
-      if (yPosition > pageHeight - 80) {
-        doc.addPage();
-        yPosition = 30;
-      }
 
       // Checkbox area
       doc.setDrawColor(primaryColor);
@@ -410,11 +335,11 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
 
       // Professional Footer - Add to all pages
       const addFooter = (pageNumber: number) => {
-        const footerY = pageHeight - 25;
+        const footerY = footerTop;
 
         // Footer background
         doc.setFillColor(primaryColor);
-        doc.rect(0, footerY, pageWidth, 25, 'F');
+        doc.rect(0, footerY, pageWidth, footerHeight, 'F');
 
         // Footer content
         doc.setTextColor(255, 255, 255);
@@ -429,7 +354,7 @@ export default function ApplicationPDFExport({ application }: ApplicationPDFExpo
 
         // Page number
         doc.setFont('helvetica', 'normal');
-        doc.text(`Halaman ${pageNumber}`, pageWidth - 25, footerY + 18);
+        doc.text(`Halaman ${pageNumber}`, pageWidth - margin, footerY + 8, { align: 'right' });
       };
 
       // Add footer to all pages
