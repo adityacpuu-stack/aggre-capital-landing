@@ -15,12 +15,13 @@ RESEND_API_KEY=
 RESEND_FROM_EMAIL="AGGRE CAPITAL <notifikasi@pathfinder.co.id>"
 RESEND_REPLY_TO=
 EMAIL_DISABLED=false
-ADMIN_EMAIL=alamat-penerima-pesan-kontak@domain-anda.com
+ADMIN_EMAIL=alamat-penerima-notifikasi-admin@domain-anda.com
 ```
 
 - API key harus server-side, tanpa prefix NEXT_PUBLIC. Simpan dalam environment, jangan commit ke Git.
 - Alamat `RESEND_FROM_EMAIL` wajib memakai domain yang sudah diverifikasi di akun Resend. Tentukan nama dan alamat pengirim yang memang ingin dipakai; key tetap harus diisi melalui environment.
 - `RESEND_REPLY_TO` opsional. Form kontak menggunakan email pengirim formulir sebagai reply-to, bukan sebagai from.
+- Penerima form `/kontak` ditetapkan di server ke `corp@aggrecapital.com`, tanpa membaca `ADMIN_EMAIL` atau `EMAIL_USER`. Pengirim tetap mengikuti `RESEND_FROM_EMAIL`.
 - Setelah mengubah environment di Vercel, redeploy agar runtime memakainya. Restart server lokal setelah perubahan `.env.local`.
 - SMTP lama di environment/database tidak digunakan pengirim baru. Tidak perlu menghapus kredensial lama untuk menyiapkan migrasi.
 - Konfigurasi sender/domain belum diverifikasi hanya dengan adanya environment; periksa status domain di Resend.

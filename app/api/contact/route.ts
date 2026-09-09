@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email-service";
 import { isValidEmail } from "@/lib/sanitize";
 
-// Endpoint publik untuk form "Hubungi Kami". Meneruskan pesan ke ADMIN_EMAIL.
+// All public contact messages go to the company inbox, never a request-supplied recipient.
+const CONTACT_RECIPIENT = "corp@aggrecapital.com";
+
+// Endpoint publik untuk form "Hubungi Kami".
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -34,17 +37,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
-    if (!adminEmail) {
-      console.error("Contact form: ADMIN_EMAIL/EMAIL_USER tidak diset");
-      return NextResponse.json(
-        { success: false, error: "Konfigurasi email belum lengkap." },
-        { status: 500 },
-      );
-    }
-
     const result = await sendEmail({
-      to: adminEmail,
+      to: CONTACT_RECIPIENT,
       ...contactEmail({ name, email, phone, message }),
       replyTo: email,
     });
