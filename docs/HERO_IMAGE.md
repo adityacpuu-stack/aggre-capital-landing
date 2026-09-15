@@ -1,0 +1,13 @@
+﻿# Agent campaign hero
+
+- User source: `Image (1).jpg`, the complete AGGRE CAPITAL agent recruitment poster.
+- Final asset: `public/images/hero-agent-banner.png`, 1536 x 1024, created with the built-in imagegen tool.
+- Single landscape banner, no slideshow. Retains the campaign headline, supporting paragraph, CTA, green architectural setting, and two representatives.
+- The banner links to `/kontak` so visitors can inquire about joining the agent program.
+- Current placement: below the service cards, alongside the agent program copy. The top hero now uses `financing-banner.png` at the user's request.
+- The PNG is RGB. Its lower edge blends into the section using a white fade, CSS multiply blending, and a bottom mask; it is not an alpha-transparent download.
+- Original files in Downloads remain unchanged. Only the selected final asset is kept in the project.
+
+## Final imagegen prompt
+
+Edit target: the supplied complete AGGRE CAPITAL agent recruitment poster. Adapt this SAME advertising campaign into a polished LANDSCAPE 3:2 website hero banner, 1536x1024. This is a layout adaptation: preserve BOTH original people (same faces, expressions, hair, black AGGRE CAPITAL shirts and pointing gestures), the green glass-office-building and foliage setting, company logo, and ALL the campaign messages. Do NOT return just a cutout of people. The banner must include a real green architectural background. Composition: logo modestly at upper left; large readable headline and body copy in the LEFT 48%; both people together in the RIGHT 52%, posed as in source, with both faces and pointing hands fully inside the canvas. Keep text clear of people. Text exact in Indonesian: headline 'DAPATKAN PENGHASILAN' followed by 'HINGGA PULUHAN JUTA'; supporting paragraph 'Gabung jadi agen AGGRE CAPITAL sekarang dan rekomendasikan pembiayaan dengan jaminan sertifikat SHM dan SHGB.'; prominent rounded green CTA with light text 'GABUNG SEKARANG' below the paragraph. Preserve word spellings exactly. Use bold clean sans-serif typography like source, high contrast cream/light mint text over forest and medium green; accent title using original pale mint highlight strips if helpful. Size text to remain legible when the whole banner is displayed 650 pixels wide. Recompose the source building setting behind people, with a subtle dark green wash behind copy, no blur sidebars and no duplicated poster. Keep original photo realism and campaign palette. The lower 8% and extreme outer edges should softly fade to pure white so the complete banner can blend into a pale green website section using CSS; keep all text, faces and fingers safely away from the fading margins. No white border, no frame, no extra slogans, no invented logos or extra objects.

@@ -6,6 +6,7 @@ import { ArrowUpRight, Newspaper, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PublicPage from "@/components/PublicPage";
+import MediaCoverage from "@/components/news/MediaCoverage";
 import type {
   NewsIndexData,
   NewsListArticle as Article,
@@ -59,13 +60,15 @@ function ArticleCard({ article }: { article: Article }) {
 }
 export default function NewsIndexContent({
   initialData,
+  initialError = false,
 }: {
   initialData: NewsIndexData;
+  initialError?: boolean;
 }) {
   const [articles, setArticles] = useState<Article[]>(initialData.articles),
     [featured, setFeatured] = useState<Article[]>(initialData.featured),
     [loading, setLoading] = useState(false),
-    [error, setError] = useState(false);
+    [error, setError] = useState(initialError);
   const [query, setQuery] = useState(""),
     [search, setSearch] = useState(""),
     [category, setCategory] = useState("all"),
@@ -78,7 +81,7 @@ export default function NewsIndexContent({
       setFeatured(initialData.featured);
       setTotal(initialData.total);
       setLoading(false);
-      setError(false);
+      setError(initialError);
       return;
     }
     const controller = new AbortController();
@@ -121,82 +124,86 @@ export default function NewsIndexContent({
     }
     void load();
     return () => controller.abort();
-  }, [page, search, category, retry, initialData]);
+  }, [page, search, category, retry, initialData, initialError]);
   const pages = Math.max(1, Math.ceil(total / 9));
   return (
     <PublicPage
       eyebrow="Berita & insight"
       title="Wawasan baru untuk langkah berikutnya."
-      description="Kabar perusahaan, kolaborasi, dan artikel dari AGGRE CAPITAL."
+      description="Liputan media, kabar perusahaan, dan wawasan seputar pembiayaan bersama AGGRE CAPITAL."
     >
-      <div className="ac-news-controls">
-        <form
-          className="ac-search"
-          onSubmit={(event) => {
-            event.preventDefault();
-            setPage(1);
-            setSearch(query.trim());
-          }}
-        >
-          <label htmlFor="news-search" className="sr-only">
-            Cari artikel
-          </label>
-          <Input
-            id="news-search"
-            placeholder="Cari berita atau topik…"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <Button type="submit" aria-label="Cari artikel">
-            <Search size={19} />
-          </Button>
-        </form>
-        <p>{loading ? "Memuat artikel…" : total + " artikel"}</p>
-      </div>
-      <div className="ac-filter-tabs" aria-label="Kategori artikel">
-        {categories.map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={category === value}
-            onClick={() => {
-              setCategory(value);
-              setPage(1);
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {loading ? (
-        <div className="ac-state" role="status">
-          Memuat berita & insight…
-        </div>
-      ) : error ? (
-        <div className="ac-state" role="alert">
-          <h2>Berita belum dapat dimuat.</h2>
-          <p>Silakan coba kembali beberapa saat lagi.</p>
-          <Button
-            className="mt-5"
-            onClick={() => setRetry((value) => value + 1)}
-          >
-            Coba lagi
-          </Button>
-        </div>
-      ) : (
-        <>
-          {featured.length > 0 &&
-            category === "all" &&
-            !search &&
-            page === 1 && (
-              <section className="ac-news-featured">
-                <p className="ac-eyebrow">PILIHAN REDAKSI</p>
-                <div className="ac-news-grid">
-                  {featured.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
+      <MediaCoverage />
+      {(initialData.total > 0 || total > 0 || loading || search || category !== "all" || error) && (
+        <section aria-labelledby="company-articles-title">
+          <h2 id="company-articles-title" className="mb-8">Artikel AGGRE CAPITAL</h2>
+          <div className="ac-news-controls">
+            <form
+              className="ac-search"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setPage(1);
+                setSearch(query.trim());
+              }}
+            >
+              <label htmlFor="news-search" className="sr-only">
+                Cari artikel
+              </label>
+              <Input
+                id="news-search"
+                placeholder="Cari berita atau topik…"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              <Button type="submit" aria-label="Cari artikel">
+                <Search size={19} />
+              </Button>
+            </form>
+            <p>{loading ? "Memuat artikel…" : error ? "Artikel belum tersedia" : total + " artikel"}</p>
+          </div>
+          <div className="ac-filter-tabs" aria-label="Kategori artikel">
+            {categories.map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={category === value}
+                onClick={() => {
+                  setCategory(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {loading ? (
+            <div className="ac-state" role="status">
+              Memuat berita & insight…
+            </div>
+          ) : error ? (
+            <div className="ac-state" role="alert">
+              <h2>Artikel perusahaan belum dapat dimuat.</h2>
+              <p>Silakan coba kembali beberapa saat lagi.</p>
+              <Button
+                className="mt-5"
+                onClick={() => setRetry((value) => value + 1)}
+              >
+                Coba lagi
+              </Button>
+            </div>
+          ) : (
+            <>
+              {featured.length > 0 &&
+                category === "all" &&
+                !search &&
+                page === 1 && (
+                  <section className="ac-news-featured">
+                    <p className="ac-eyebrow">PILIHAN REDAKSI</p>
+                    <div className="ac-news-grid">
+                      {featured.map((article) => (
+                        <ArticleCard key={article.id} article={article} />
+                      ))}
+                    </div>
+                </section>
             )}
           {articles.length > 0 ? (
             <>
@@ -248,6 +255,8 @@ export default function NewsIndexContent({
             </div>
           )}
         </>
+      )}
+      </section>
       )}
     </PublicPage>
   );

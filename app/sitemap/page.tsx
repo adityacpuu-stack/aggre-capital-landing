@@ -69,6 +69,13 @@ export default function Sitemap() {
       ],
     },
     {
+      title: "Penghargaan",
+      icon: Building2,
+      href: "/penghargaan",
+      description: "Dokumentasi penghargaan dan pencapaian AGGRE CAPITAL",
+      pages: [{ name: "Pemred Award Pena Emas 2026", href: "/penghargaan" }],
+    },
+    {
       title: "Berita & Artikel",
       icon: FileText,
       href: "/news",

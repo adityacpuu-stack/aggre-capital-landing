@@ -113,14 +113,21 @@
   position: relative;
   min-width: 0;
   align-self: center;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid #ffffff26;
+  mix-blend-mode: multiply;
 }
 .heroImage {
   display: block;
   width: 100%;
   height: auto;
+  object-fit: contain;
+  -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+}
+.heroBannerLink {
+  display: block;
+  border-radius: 8px;
+}
+.heroBannerLink .heroImage {
   border-radius: inherit;
 }
 .explore {
@@ -741,11 +748,6 @@
   color: #153f32;
 }
 
-.heroVisual {
-  border: 1px solid #c7d9bc;
-  border-radius: 8px;
-  box-shadow: 0 18px 40px #153f3210;
-}
 
 .explore {
   color: #42644b;
@@ -914,5 +916,164 @@
   }
   .heroActions {
     gap: 18px;
+  }
+}
+
+.agentCampaign {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+  margin-top: 56px;
+  padding: 40px 0 40px 40px;
+  background: #f2f6ef;
+  border-radius: 8px;
+}
+.campaignCopy {
+  max-width: 500px;
+}
+.campaignCopy h3 {
+  font-size: clamp(1.9rem, 3vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+.campaignDescription {
+  margin-top: 24px;
+  max-width: 440px;
+  color: #5c7263;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.campaignNote {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0;
+  font-size: 0.875rem;
+  color: #42644b;
+}
+.campaignNote svg {
+  flex-shrink: 0;
+}
+.campaignButton {
+  min-height: 52px;
+  height: auto;
+  padding: 14px 22px;
+  background: #153f32;
+  color: #fff;
+  font-size: 1rem;
+}
+.campaignButton:hover {
+  background: #285c43;
+}
+.campaignImage,
+.awardImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.campaignImage {
+  justify-self: center;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+}
+.awardsSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 72px);
+  border-top: 1px solid #dce5dd;
+}
+.awardsCopy > p:not(.sectionLabel) {
+  max-width: 430px;
+  margin: 24px 0 30px;
+  color: #62736a;
+  line-height: 1.8;
+}
+.awardFigure {
+  min-width: 0;
+  margin: 0;
+}
+.awardFigure > a {
+  display: block;
+  border-radius: 6px;
+}
+.awardBanner {
+  container-type: inline-size;
+  padding: 2.5% 4% 7%;
+  background: radial-gradient(ellipse at top right, #416d49, transparent 65%), #153f32;
+  -webkit-mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+}
+.awardPhotos {
+  position: relative;
+  aspect-ratio: 1024 / 607;
+  overflow: hidden;
+  border-radius: 3px;
+}
+/* Keep both original photo rows; replace only the poster's lower text panel. */
+.awardPhotos .awardImage {
+  position: absolute;
+  inset: 0 0 auto;
+  border-radius: 0;
+}
+.awardBannerCaption {
+  display: grid;
+  justify-items: center;
+  gap: 0.5cqw;
+  padding-top: 2cqw;
+  color: #e2f3d6;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1.2;
+  font-weight: 600;
+}
+.awardBannerCaption span {
+  font-size: 2.3cqw;
+  letter-spacing: 0.07em;
+}
+.awardBannerCaption strong {
+  padding: 0.2cqw 1.4cqw;
+  background: #d7edc9;
+  color: #153f32;
+  font-size: 3.5cqw;
+  letter-spacing: -0.02em;
+}
+.awardBanner:focus-visible {
+  outline: 3px solid #6e9544;
+  outline-offset: 5px;
+}
+.awardFigure figcaption {
+  margin-top: 14px;
+  color: #62736a;
+  font-size: 0.8125rem;
+}
+@media (max-width: 1000px) {
+  .agentCampaign {
+    padding: 28px 0 28px 28px;
+    gap: 28px;
+  }
+}
+@media (max-width: 760px) {
+  .agentCampaign,
+  .awardsSection {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .agentCampaign {
+    margin-top: 36px;
+    padding: 24px 0 0;
+  }
+  .campaignCopy {
+    max-width: none;
+    padding: 0 24px;
+  }
+  .campaignDescription,
+  .awardsCopy > p:not(.sectionLabel) {
+    max-width: none;
   }
 }

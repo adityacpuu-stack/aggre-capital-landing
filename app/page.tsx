@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import SiteHeader from "@/components/SiteHeader";
 import TeamPortrait from "@/components/TeamPortrait";
+import MediaCoverage from "@/components/news/MediaCoverage";
 import s from "./landing.module.css";
 
 const services = [
@@ -138,15 +139,21 @@ export default function AggreCapitalLanding() {
             </div>
           </div>
           <div className={s.heroVisual}>
-            <Image
-              src="/images/banner.jpg"
-              alt="AGGRE CAPITAL — Solusi pinjaman kebutuhan Anda"
-              width={1200}
-              height={800}
-              sizes="(max-width: 760px) 100vw, 48vw"
-              priority
-              className={s.heroImage}
-            />
+            <Link
+              href="/pengajuan"
+              className={s.heroBannerLink}
+              aria-label="Solusi pembiayaan AGGRE CAPITAL — ajukan pendanaan"
+            >
+              <Image
+                src="/images/financing-banner.png"
+                alt="AGGRE CAPITAL, akses satu pintu untuk pembiayaan dengan jaminan sertifikat, limit sampai 5 miliar, proses cepat dan mudah. Untuk renovasi rumah, tambahan modal, gaji karyawan, dan proyek dadakan."
+                width={1536}
+                height={1024}
+                sizes="(max-width: 760px) 88vw, 52vw"
+                priority
+                className={s.heroImage}
+              />
+            </Link>
           </div>
           <a href="#layanan" className={s.explore}>
             KENALI SOLUSI KAMI <ArrowDown size={16} aria-hidden="true" />
@@ -215,6 +222,40 @@ export default function AggreCapitalLanding() {
               </Link>
             ))}
           </div>
+          <section
+            className={s.agentCampaign}
+            aria-labelledby="agent-campaign-title"
+          >
+            <div className={s.campaignCopy}>
+              <p className={s.sectionLabel}>Peluang menjadi agen</p>
+              <h3 id="agent-campaign-title">
+                Buka peluang.<br />Bertumbuh bersama.
+              </h3>
+              <p className={s.campaignDescription}>
+                Gabung menjadi agen AGGRE CAPITAL dan rekomendasikan pembiayaan
+                dengan jaminan sertifikat SHM dan SHGB kepada jaringan Anda.
+              </p>
+              <p className={s.campaignNote}>
+                <Check size={18} aria-hidden="true" />
+                Kenali program agen bersama tim kami.
+              </p>
+              <Button asChild className={s.campaignButton}>
+                <Link href="/kontak">
+                  Gabung jadi agen <ArrowUpRight size={18} aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
+            <Link href="/kontak" aria-label="Gabung jadi agen AGGRE CAPITAL — hubungi tim kami">
+              <Image
+                src="/images/hero-agent-banner.png"
+                alt="Dapatkan penghasilan hingga puluhan juta. Gabung jadi agen AGGRE CAPITAL sekarang dan rekomendasikan pembiayaan dengan jaminan sertifikat SHM dan SHGB. Gabung sekarang."
+                width={1536}
+                height={1024}
+                sizes="(max-width: 760px) 88vw, (max-width: 1440px) 50vw, 720px"
+                className={s.campaignImage}
+              />
+            </Link>
+          </section>
         </section>
         <section
           id="keunggulan"
@@ -314,6 +355,55 @@ export default function AggreCapitalLanding() {
             ))}
           </div>
         </section>
+        <section
+          id="penghargaan"
+          className={`${s.section} ${s.awardsSection}`}
+          aria-labelledby="awards-title"
+        >
+          <div className={s.awardsCopy}>
+            <p className={s.sectionLabel}>Pencapaian & penghargaan</p>
+            <h2 id="awards-title">
+              Penghargaan untuk komitmen, inspirasi untuk negeri.
+            </h2>
+            <p>
+              AGGRE CAPITAL bangga menjadi bagian dari para pemimpin yang terus
+              berkontribusi dan menginspirasi perubahan positif.
+            </p>
+            <Link
+              href="/penghargaan"
+              className={s.darkLink}
+            >
+              Lihat penghargaan
+              <ArrowUpRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+          <figure className={s.awardFigure}>
+            <Link
+              href="/penghargaan"
+              aria-label="Lihat penghargaan dan dokumentasi Pemred Award Pena Emas 2026"
+              className={s.awardBanner}
+            >
+              <div className={s.awardPhotos}>
+                <Image
+                  src="/images/pemred-award-2026.jpg"
+                  alt="Kolase dokumentasi Pemred Award Pena Emas 2026: penerima penghargaan memegang piagam, suasana panggung, dan penyerahan penghargaan."
+                  width={1024}
+                  height={825}
+                  sizes="(max-width: 760px) 88vw, (max-width: 1440px) 56vw, 760px"
+                  className={s.awardImage}
+                />
+              </div>
+              <div className={s.awardBannerCaption} aria-hidden="true">
+                <span>Penghargaan untuk komitmen,</span>
+                <strong>Inspirasi untuk negeri.</strong>
+              </div>
+            </Link>
+            <figcaption>Dokumentasi Pemred Award Pena Emas 2026.</figcaption>
+          </figure>
+        </section>
+        <div className={s.section}>
+          <MediaCoverage showAllLink />
+        </div>
         {testimonials.length > 0 && (
           <section
             className={`${s.section} ${s.testimonials}`}

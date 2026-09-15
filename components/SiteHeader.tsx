@@ -15,6 +15,7 @@ import {
 const links = [
   ["Layanan", "/#layanan"],
   ["Tim kami", "/team"],
+  ["Penghargaan", "/penghargaan"],
   ["Mitra", "/partners"],
   ["Testimoni", "/testimoni"],
   ["FAQ", "/faq"],

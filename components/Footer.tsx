@@ -35,6 +35,7 @@ export default function Footer() {
               {[
                 ["Layanan", "/#layanan"],
                 ["Tim kami", "/team"],
+                ["Penghargaan", "/penghargaan"],
                 ["Mitra strategis", "/partners"],
                 ["Cerita nasabah", "/testimoni"],
                 ["Berita & insight", "/news"],

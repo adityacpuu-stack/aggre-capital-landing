@@ -1,0 +1,21 @@
+.section { padding-bottom: 56px; }
+.heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 32px; }
+.heading h2 { color: #153f32; font-size: clamp(1.9rem, 3vw, 2.5rem); font-weight: 500; line-height: 1.2; letter-spacing: -0.035em; }
+.heading p { margin-top: 16px; color: #62736a; line-height: 1.7; }
+.allLink { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; padding-block: 10px; color: #153f32; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.card { display: flex; flex-direction: column; padding: 28px; background: #f2f6ef; border: 1px solid #dce5dd; border-radius: 6px; }
+.source { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #cddbc9; color: #153f32; font-size: 1.25rem; font-weight: 600; }
+.source svg { flex-shrink: 0; }
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 22px 0 14px; color: #526a5b; font-size: 0.8125rem; }
+.card h3 { margin: 0; color: #153f32; font-size: 1.25rem; font-weight: 500; line-height: 1.4; letter-spacing: -0.02em; }
+.summary { margin: 18px 0 26px; color: #526a5b; font-size: 0.9375rem; line-height: 1.75; }
+.action { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-block: 10px; color: #153f32; font-size: 0.875rem; font-weight: 500; }
+.section a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.section a:focus-visible { outline: 3px solid #6e9544; outline-offset: 5px; }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .card { padding: 24px; }
+  .section { padding-bottom: 40px; }
+}
