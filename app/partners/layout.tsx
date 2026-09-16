@@ -3,7 +3,7 @@ import { createPageMetadata } from "@/lib/site-metadata";
 export const metadata = createPageMetadata({
   title: "Partner Strategis",
   description:
-    "Ekosistem mitra strategis AGGRE CAPITAL — BPR, bank, dan lembaga keuangan terpercaya yang mendukung solusi pendanaan multiguna terbaik di Indonesia.",
+    "Jaringan mitra AGGRE CAPITAL lintas cabang, termasuk BPR Tata Karya Indonesia, BPR Bank Kertiawan, Bank Vima, dan BPR Satyadhana Artha.",
   path: "/partners",
   keywords: [
     "partner aggre capital",

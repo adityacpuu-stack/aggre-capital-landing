@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import PublicPage, { ContactBand } from "@/components/PublicPage";
+import BranchPartners from "@/components/BranchPartners";
+import { isBranchPartner } from "@/lib/branch-partners";
 import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -189,11 +191,6 @@ export default function PartnersPage() {
       subtitle: "Global Financial Services",
       logo: "/images/kb-financial.png",
     },
-    {
-      name: "Bank Vima",
-      subtitle: "PT Bank Pembangunan Daerah Bali",
-      logo: "/images/bank-vima.png",
-    },
     { name: "Ralali", subtitle: "B2B Marketplace", logo: "/images/ralali.png" },
     {
       name: "MNC Finance",
@@ -245,6 +242,7 @@ export default function PartnersPage() {
       title="Satu jaringan. Lebih banyak peluang."
       description="Kolaborasi dengan lembaga keuangan untuk menghadirkan pilihan pendanaan bagi kebutuhan Anda."
     >
+      <BranchPartners />
       <div className="ac-toolbar">
         <div>
           <p className="ac-eyebrow">MITRA STRATEGIS</p>
@@ -266,7 +264,7 @@ export default function PartnersPage() {
       ) : (
         <>
           <div className="ac-partner-grid">
-            {partners.map((partner, index) => (
+            {partners.filter(partner => !isBranchPartner(partner.name)).map((partner, index) => (
               <article className="ac-partner-card" key={partner.id}>
                 <div className="ac-partner-heading">
                   <span className="ac-pill">{partner.type || "Mitra"}</span>
@@ -323,7 +321,7 @@ export default function PartnersPage() {
               <h2>Kemitraan yang saling melengkapi.</h2>
             </div>
             <div className="ac-ecosystem">
-              {additionalPartners.map((partner) => (
+              {additionalPartners.filter(partner => !isBranchPartner(partner.name)).map((partner) => (
                 <article key={partner.id || partner.name}>
                   <Building2 size={25} strokeWidth={1.5} aria-hidden="true" />
                   <h3>{partner.name}</h3>

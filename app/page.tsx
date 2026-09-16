@@ -21,6 +21,7 @@ import Footer from "@/components/Footer";
 import SiteHeader from "@/components/SiteHeader";
 import TeamPortrait from "@/components/TeamPortrait";
 import MediaCoverage from "@/components/news/MediaCoverage";
+import { branchPartners, isBranchPartner } from "@/lib/branch-partners";
 import s from "./landing.module.css";
 
 const services = [
@@ -454,20 +455,18 @@ export default function AggreCapitalLanding() {
             <h2 id="partners-title">Bertumbuh bersama.</h2>
           </div>
           <div className={s.partnerNames}>
-            {partners.length > 0 ? (
-              partners.map((partner) => (
+            {branchPartners.map(partner => (
+              <Link href="/partners#mitra-cabang" key={partner.id}>
+                {partner.name}
+                <span>{partner.legalName}</span>
+              </Link>
+            ))}
+            {partners.filter(partner => !isBranchPartner(partner.name)).map((partner) => (
                 <Link href="/partners" key={partner.id}>
                   {partner.name}
                   <span>{partner.subtitle}</span>
                 </Link>
-              ))
-            ) : (
-              <p>
-                Kenali jaringan mitra strategis
-                <br />
-                di balik layanan AGGRE CAPITAL.
-              </p>
-            )}
+            ))}
           </div>
           <Link href="/partners" className={s.darkLink}>
             Lihat mitra <ArrowUpRight size={20} aria-hidden="true" />
