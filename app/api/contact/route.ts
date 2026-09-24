@@ -4,7 +4,8 @@ import { sendEmail } from "@/lib/email-service";
 import { isValidEmail } from "@/lib/sanitize";
 
 // All public contact messages go to the company inbox, never a request-supplied recipient.
-const CONTACT_RECIPIENT = "corp@aggrecapital.com";
+const CONTACT_RECIPIENT = "hallo@aggrecapital.com";
+const CONTACT_CC = "corp@aggrecapital.com";
 
 // Endpoint publik untuk form "Hubungi Kami".
 export async function POST(request: NextRequest) {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     const result = await sendEmail({
       to: CONTACT_RECIPIENT,
+      cc: CONTACT_CC,
       ...contactEmail({ name, email, phone, message }),
       replyTo: email,
     });

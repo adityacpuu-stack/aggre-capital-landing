@@ -88,6 +88,7 @@ async function main() {
     assert.equal(accepted.messageId, "simulated-email-id");
     const payload = JSON.parse(fetchCalls[0].body);
     assert.deepEqual(payload.to, [options.to]);
+    assert.equal(Object.hasOwn(payload, "cc"), false);
     assert.equal(payload.from, process.env.RESEND_FROM_EMAIL);
     assert.equal(payload.reply_to, options.replyTo);
     assert.equal(
@@ -120,6 +121,54 @@ async function main() {
       );
       assert(!JSON.stringify(result).includes("private provider message"));
     }
+
+    responseMode = "accepted";
+    for (const cc of [" copy@example.invalid ", ["copy@example.invalid", " second@example.invalid "]]) {
+      const result = await sendEmail({ ...options, cc });
+      assert.equal(result.success, true);
+      assert.deepEqual(
+        JSON.parse(fetchCalls.at(-1).body).cc,
+        Array.isArray(cc) ? ["copy@example.invalid", "second@example.invalid"] : ["copy@example.invalid"],
+      );
+    }
+    for (const cc of ["invalid", "copy@example.invalid\r\nBcc: other@example.invalid", ["valid@example.invalid", "invalid"]]) {
+      const count = fetchCalls.length;
+      assert.equal((await sendEmail({ ...options, cc })).code, "invalid_recipient");
+      assert.equal(fetchCalls.length, count, "invalid CC must not reach the provider");
+    }
+
+    const contactPost = load("app/api/contact/route.ts").POST;
+    const contactRequest = (overrides = {}) => new NextRequest("http://localhost/api/contact", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "<Visitor>",
+        email: "visitor@example.invalid",
+        phone: "0800000000",
+        message: "Pertanyaan pengunjung <contoh>",
+        to: "untrusted@example.invalid",
+        cc: "untrusted-cc@example.invalid",
+        ...overrides,
+      }),
+    });
+    const contactCount = fetchCalls.length;
+    const contactResponse = await contactPost(contactRequest());
+    assert.equal(contactResponse.status, 200);
+    assert.equal((await contactResponse.json()).success, true);
+    assert.equal(fetchCalls.length, contactCount + 1, "contact sends one email with CC");
+    const contactPayload = JSON.parse(fetchCalls.at(-1).body);
+    assert.deepEqual(contactPayload.to, ["hallo@aggrecapital.com"]);
+    assert.deepEqual(contactPayload.cc, ["corp@aggrecapital.com"]);
+    assert.equal(contactPayload.reply_to, "visitor@example.invalid");
+    assert.equal(contactPayload.from, process.env.RESEND_FROM_EMAIL);
+    assert(contactPayload.html.includes("&lt;Visitor&gt;"));
+    assert(contactPayload.html.includes("&lt;contoh&gt;"));
+    assert.equal((await contactPost(contactRequest({ email: "invalid" }))).status, 400);
+    assert.equal(fetchCalls.length, contactCount + 1);
+    responseMode = "rejected";
+    const contactRejected = await contactPost(contactRequest());
+    assert.equal(contactRejected.status, 502);
+    assert.equal((await contactRejected.json()).success, false);
+    responseMode = "accepted";
 
     let notification = {
       success: true,
@@ -235,6 +284,7 @@ async function main() {
     "PASS: submission stays saved for all notification outcomes; test endpoint requires auth and only sends to account owner",
   );
   console.log("No real emails sent; no database writes.");
+  console.log("PASS: contact To/CC cannot be overridden; visitor reply-to, CC validation, and provider rejection handled");
 }
 main().catch((error) => {
   console.error(error);

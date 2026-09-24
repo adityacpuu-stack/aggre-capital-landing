@@ -3,6 +3,7 @@ import { isValidEmail } from "@/lib/sanitize";
 
 export interface EmailOptions {
   to: string | string[];
+  cc?: string | string[];
   subject: string;
   html?: string;
   text?: string;
@@ -74,10 +75,14 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
   const to = (Array.isArray(options.to) ? options.to : [options.to]).map(
     (address) => address.trim(),
   );
+  const cc = (options.cc === undefined ? [] : Array.isArray(options.cc) ? options.cc : [options.cc]).map(
+    (address) => address.trim(),
+  );
   const replyTo = options.replyTo?.trim() || config.replyTo;
   if (
     !to.length ||
     to.some((address) => !validMailbox(address)) ||
+    cc.some((address) => !validMailbox(address)) ||
     (replyTo && !validMailbox(replyTo))
   ) {
     return failed("invalid_recipient", "Alamat email tidak valid.");
@@ -100,6 +105,7 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
       body: JSON.stringify({
         from: config.from,
         to,
+        ...(cc.length ? { cc } : {}),
         subject: options.subject,
         html: options.html,
         text: options.text,

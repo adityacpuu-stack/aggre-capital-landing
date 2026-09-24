@@ -21,7 +21,7 @@ ADMIN_EMAIL=alamat-penerima-notifikasi-admin@domain-anda.com
 - API key harus server-side, tanpa prefix NEXT_PUBLIC. Simpan dalam environment, jangan commit ke Git.
 - Alamat `RESEND_FROM_EMAIL` wajib memakai domain yang sudah diverifikasi di akun Resend. Tentukan nama dan alamat pengirim yang memang ingin dipakai; key tetap harus diisi melalui environment.
 - `RESEND_REPLY_TO` opsional. Form kontak menggunakan email pengirim formulir sebagai reply-to, bukan sebagai from.
-- Penerima form `/kontak` ditetapkan di server ke `corp@aggrecapital.com`, tanpa membaca `ADMIN_EMAIL` atau `EMAIL_USER`. Pengirim tetap mengikuti `RESEND_FROM_EMAIL`.
+- Penerima form `/kontak` ditetapkan di server: **To** `hallo@aggrecapital.com`, **CC** `corp@aggrecapital.com`, tanpa membaca `ADMIN_EMAIL` atau `EMAIL_USER`. Penerima tidak dapat diganti lewat input formulir. Pengirim tetap mengikuti `RESEND_FROM_EMAIL`, dan reply-to memakai email pengunjung.
 - Setelah mengubah environment di Vercel, redeploy agar runtime memakainya. Restart server lokal setelah perubahan `.env.local`.
 - SMTP lama di environment/database tidak digunakan pengirim baru. Tidak perlu menghapus kredensial lama untuk menyiapkan migrasi.
 - Konfigurasi sender/domain belum diverifikasi hanya dengan adanya environment; periksa status domain di Resend.
@@ -50,7 +50,7 @@ node scripts/check-resend.cjs
 npm run build
 ```
 
-Tes memakai transport dan database simulasi, tanpa email nyata atau mutasi database. Meliputi reply-to, idempotency, konfigurasi kosong, disabled, provider error, timeout, status submit, serta autentikasi endpoint test.
+Tes memakai transport dan database simulasi, tanpa email nyata atau mutasi database. Meliputi penerima tetap form kontak, CC dan validasinya, reply-to, idempotency, konfigurasi kosong, disabled, provider error, timeout, status submit, serta autentikasi endpoint test.
 
 Untuk uji nyata, login dashboard > Pengaturan > Notifikasi email > **Kirim email uji ke akun saya**. Tombol ini baru aktif jika konfigurasi tersedia dan selalu mengirim ke email admin yang sedang login. Periksa inbox/spam dan log Resend. Tidak ada email yang otomatis dikirim saat membuka halaman pengaturan.
 
