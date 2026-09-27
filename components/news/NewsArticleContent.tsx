@@ -325,6 +325,11 @@ export default function NewsArticleContent({
                 )}
               </div>
 
+              {article.updated_at && new Date(article.updated_at) > new Date(article.published_at || article.created_at) && (
+                <p className="mb-6 text-sm text-gray-600">
+                  Diperbarui: <time dateTime={article.updated_at}>{formatDate(article.updated_at)}</time>
+                </p>
+              )}
               {/* Article Content */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 lg:p-10 mb-12">
                 <div

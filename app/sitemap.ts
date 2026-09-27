@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { query } from "@/lib/database";
 import { SITE_URL } from "@/lib/site-metadata";
+import { applyEditorialRevision, newsUnderReview } from "@/lib/news-editorial";
 
 // Regenerasi sitemap tiap jam supaya artikel berita baru ikut terindeks.
 export const revalidate = 3600;
@@ -15,12 +16,14 @@ async function getNewsUrls(): Promise<MetadataRoute.Sitemap> {
   const seen = new Set<string>();
   return result.rows
     .filter((row) => {
+      if (newsUnderReview.has(row.slug)) return false;
       if (seen.has(row.slug)) return false;
       seen.add(row.slug);
       return true;
     })
     .map((row) => {
-      const changed = row.updated_at || row.published_at || row.created_at;
+      const reviewed = applyEditorialRevision(row);
+      const changed = reviewed.updated_at || reviewed.published_at || reviewed.created_at;
       const date = changed ? new Date(changed) : null;
       return {
         url: baseUrl + "/news/" + encodeURIComponent(row.slug),

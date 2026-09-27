@@ -44,8 +44,9 @@ export default function AwardsPage() {
           <p className={s.year}>2026</p>
           <h2 id="award-title">Pemred Award Pena Emas</h2>
           <p>
-            Momen penghargaan yang mengangkat komitmen dan kontribusi para
-            pemimpin dalam menginspirasi perubahan positif.
+            Rian Hidayat dari AGGRE CAPITAL tercantum sebagai penerima kategori
+            Corporate Leadership The Best Communication dalam liputan
+            Waspada.id yang diterbitkan pada 19 Juli 2026.
           </p>
           <p>
             Dokumentasi ini merangkum suasana acara, para penerima piagam,

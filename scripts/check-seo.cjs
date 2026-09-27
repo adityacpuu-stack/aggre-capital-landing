@@ -173,6 +173,43 @@ async function main() {
   const api = await get("/api/news/public?limit=500");
   const articles = JSON.parse(api.html).data;
   const newsIndex = all.find((row) => row.pathname === "/news").html;
+  const { newsUnderReview, editorialUpdatedAt, applyEditorialRevision } = loadTs("lib/news-editorial.ts");
+  const unrelatedArticle = { slug: "constructor", title: "New CMS article" };
+  assert.equal(applyEditorialRevision(unrelatedArticle), unrelatedArticle);
+  const faqHtml = all.find(row => row.pathname === "/faq").html;
+  const faqBody = unescape(faqHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ""));
+  const faqSchema = schemas(faqHtml).find(schema => schema["@type"] === "FAQPage");
+  assert.equal((faqBody.match(/<details\b/g) || []).length, faqSchema.mainEntity.length);
+  for (const question of faqSchema.mainEntity) {
+    assert(faqBody.includes(question.acceptedAnswer.text), "FAQ answer present without scripts or clicks");
+  }
+  for (const slug of newsUnderReview) {
+    assert(!articles.some(article => article.slug === slug));
+    assert(!entries.some(entry => entry.url.endsWith("/news/" + slug)));
+    assert(!newsIndex.includes('href="/news/' + slug + '"'));
+    const held = await get("/news/" + slug);
+    assert.equal(held.response.status, 200);
+    assert(metas(held.html, "robots").join(",").includes("noindex"));
+    assert(held.html.includes("Artikel sedang ditinjau."));
+    assert(!schemas(held.html).some(schema => schema["@type"] === "Article"));
+    const heldApi = await get("/api/news/public?slug=" + slug);
+    assert.equal(JSON.parse(heldApi.html).pagination.total, 0);
+  }
+  for (const slug of ["panduan-lengkap-cara-mengajukan-pinjaman-online-di-aggre-capital", "tips-memilih-pinjaman-online-aman"]) {
+    const article = articles.find(article => article.slug === slug);
+    assert(article, "reviewed educational article remains public");
+    assert(!/0[.,]8%|Persetujuan dalam 24 jam|AGGRE CAPITAL merupakan fintech resmi/.test(article.content));
+    assert.equal(article.updated_at, new Date(editorialUpdatedAt).toISOString());
+    assert.equal(entries.find(entry => entry.url.endsWith("/news/" + slug)).lastmod, article.updated_at);
+    assert(!Object.hasOwn(article, "views"), "no fabricated traffic counters");
+  }
+  const searchResult = JSON.parse((await get("/api/news/public?search=balloon&limit=1")).html);
+  assert.equal(searchResult.pagination.total, 2, "search reads revised article text");
+  assert.equal(searchResult.data.length, 1, "pagination happens after review and search");
+  const secondPage = JSON.parse((await get("/api/news/public?search=balloon&limit=1&page=2")).html);
+  assert.equal(secondPage.data.length, 1);
+  assert.notEqual(secondPage.data[0].slug, searchResult.data[0].slug);
+  console.log("PASS: FAQ answers in initial HTML; reviewed stories excluded from public surfaces; revisions and pagination consistent");
   for (const article of articles.slice(0, 9))
     assert(newsIndex.includes(`/news/${article.slug}`), "server article link");
   let count = 0;

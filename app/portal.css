@@ -462,6 +462,26 @@
 .ac-faq-group [data-state] {
   border-color: var(--ac-line);
 }
+.ac-faq-item {
+  border-bottom: 1px solid var(--ac-line);
+}
+.ac-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 22px 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.6;
+  cursor: pointer;
+  list-style: none;
+}
+.ac-faq-item summary::-webkit-details-marker { display: none; }
+.ac-faq-item summary svg { flex-shrink: 0; transition: transform .2s; }
+.ac-faq-item[open] summary svg { transform: rotate(180deg); }
+.ac-faq-item summary:focus-visible { outline: 2px solid var(--ac-green); outline-offset: 4px; }
+.ac-faq-item > p { padding-bottom: 22px; color: var(--ac-muted); font-size: 1rem; line-height: 1.85; }
 .ac-contact-grid {
   display: grid;
   grid-template-columns: 1fr 1.25fr;

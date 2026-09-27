@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { query } from "@/lib/database";
+import { applyEditorialRevision, newsUnderReview } from "@/lib/news-editorial";
 import type {
   NewsArticle,
   NewsIndexData,
@@ -17,6 +18,7 @@ function isoDate(value: unknown): string {
 // Database failures propagate; only a successful empty query means not found.
 export const getPublishedArticle = cache(
   async (slug: string): Promise<NewsArticle | null> => {
+    if (newsUnderReview.has(slug)) return null;
     const result = await query(
       `
     SELECT id, title, slug, content, excerpt, featured_image, author, status,
@@ -28,7 +30,7 @@ export const getPublishedArticle = cache(
     );
     const row = result.rows[0];
     if (!row) return null;
-    return {
+    return applyEditorialRevision({
       ...row,
       category: row.category || "News",
       author: row.author || "AGGRE CAPITAL",
@@ -36,23 +38,32 @@ export const getPublishedArticle = cache(
       created_at: isoDate(row.created_at),
       updated_at: isoDate(row.updated_at),
       published_at: isoDate(row.published_at),
-    };
+    });
   },
 );
 
-const listColumns =
-  "id, title, slug, excerpt, category, read_time, featured_image, author, created_at, published_at";
+// Apply the same public content policy before search, counts and pagination.
+// This company archive is small; revisit SQL pagination if it grows substantially.
+export const getPublishedArticles = cache(async (): Promise<NewsArticle[]> => {
+  const result = await query(
+    `SELECT id, title, slug, content, excerpt, featured_image, author, status,
+            category, tags, meta_description, read_time, featured,
+            created_at, updated_at, published_at
+     FROM news WHERE status = 'published' ORDER BY created_at DESC`,
+  );
+  return result.rows.filter(row => !newsUnderReview.has(row.slug)).map(row => applyEditorialRevision({
+    ...row,
+    category: row.category || "News",
+    author: row.author || "AGGRE CAPITAL",
+    tags: Array.isArray(row.tags) ? row.tags.join(",") : row.tags || "",
+    created_at: isoDate(row.created_at),
+    updated_at: isoDate(row.updated_at),
+    published_at: isoDate(row.published_at),
+  }));
+});
 
 export async function getPublishedNewsIndex(): Promise<NewsIndexData> {
-  const [list, featured, total] = await Promise.all([
-    query(
-      `SELECT ${listColumns} FROM news WHERE status = 'published' ORDER BY created_at DESC LIMIT 9`,
-    ),
-    query(
-      `SELECT ${listColumns} FROM news WHERE status = 'published' AND featured = true ORDER BY created_at DESC LIMIT 3`,
-    ),
-    query("SELECT COUNT(*) AS count FROM news WHERE status = 'published'"),
-  ]);
+  const articles = await getPublishedArticles();
   const format = (row: Record<string, any>): NewsListArticle => ({
     id: row.id,
     title: row.title,
@@ -75,8 +86,8 @@ export async function getPublishedNewsIndex(): Promise<NewsIndexData> {
       : "",
   });
   return {
-    articles: list.rows.map(format),
-    featured: featured.rows.map(format),
-    total: Number(total.rows[0]?.count || 0),
+    articles: articles.slice(0, 9).map(format),
+    featured: articles.filter(article => article.featured).slice(0, 3).map(format),
+    total: articles.length,
   };
 }

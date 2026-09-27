@@ -1,20 +1,5 @@
-"use client";
-
 import PublicPage, { ContactBand } from "@/components/PublicPage";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import {
-  ArrowLeft,
-  ChevronDown,
-  HelpCircle,
-  Phone,
-  MessageSquare,
-} from "lucide-react";
-import Image from "next/image";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 const faqs = [
@@ -31,7 +16,7 @@ const faqs = [
       },
       {
         q: "Bagaimana cara mengajukan pendanaan?",
-        a: "Pengajuan bisa dilakukan secara online melalui halaman Pengajuan di website kami, atau langsung menghubungi tim AGGRE CAPITAL melalui telepon di +62 21 3880 8101. Tim kami akan memandu Anda melalui seluruh proses.",
+        a: "Pengajuan bisa dilakukan melalui halaman Pengajuan di website kami, atau dengan menghubungi tim AGGRE CAPITAL di +62 21 27881921. Tim kami akan memandu Anda melalui proses pengajuan.",
       },
       {
         q: "Apakah bisa mengajukan secara online?",
@@ -44,7 +29,7 @@ const faqs = [
     items: [
       {
         q: "Apa saja syarat pengajuan pendanaan?",
-        a: "Syarat umum meliputi: WNI berusia 21-60 tahun, memiliki penghasilan tetap atau usaha yang berjalan, dan dokumen identitas yang valid (KTP, NPWP). Syarat lengkap akan diinformasikan oleh tim kami saat proses konsultasi.",
+        a: "Siapkan informasi identitas, pekerjaan atau usaha, kebutuhan dana, dan jaminan yang akan diajukan. Persyaratan serta kelayakan pengajuan mengikuti produk dan mitra pembiayaan yang dipilih. Minta daftar persyaratan kepada tim sebelum menyiapkan dokumen.",
       },
       {
         q: "Dokumen apa saja yang diperlukan?",
@@ -52,7 +37,7 @@ const faqs = [
       },
       {
         q: "Apakah perlu agunan atau jaminan?",
-        a: "Ketentuan agunan bergantung pada jenis dan besaran pendanaan yang diajukan. Tim kami akan menjelaskan opsi yang tersedia sesuai dengan profil dan kebutuhan Anda saat proses konsultasi.",
+        a: "Layanan yang ditampilkan di website mencakup pembiayaan dengan jaminan sertifikat SHM atau SHGB. Penerimaan dan penilaian jaminan mengikuti pemeriksaan serta ketentuan mitra pembiayaan. Konsultasikan kondisi properti Anda kepada tim.",
       },
     ],
   },
@@ -94,7 +79,7 @@ const faqs = [
       },
       {
         q: "Di daerah mana saja AGGRE CAPITAL melayani?",
-        a: "AGGRE CAPITAL melayani nasabah di seluruh Indonesia. Kantor pusat kami berlokasi di Jakarta Selatan, dan tim kami siap melayani Anda secara online maupun offline.",
+        a: "Kantor pusat AGGRE CAPITAL berada di Menara Sentraya Lantai 18, Jakarta Selatan. Hubungi tim melalui halaman Kontak untuk memastikan ketersediaan layanan di wilayah Anda dan lokasi properti yang akan dijaminkan.",
       },
     ],
   },
@@ -148,14 +133,14 @@ export default function FAQPage() {
             >
               <p className="ac-eyebrow">0{index + 1}</p>
               <h2>{group.category}</h2>
-              <Accordion type="multiple">
-                {group.items.map((item, i) => (
-                  <AccordionItem value={String(i)} key={item.q}>
-                    <AccordionTrigger>{item.q}</AccordionTrigger>
-                    <AccordionContent>{item.a}</AccordionContent>
-                  </AccordionItem>
+              <div>
+                {group.items.map((item) => (
+                  <details className="ac-faq-item" key={item.q}>
+                    <summary>{item.q}<ChevronDown size={20} aria-hidden="true" /></summary>
+                    <p>{item.a}</p>
+                  </details>
                 ))}
-              </Accordion>
+              </div>
             </section>
           ))}
         </div>
