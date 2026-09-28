@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/email-service";
 import { applicationEmail } from "@/lib/email-templates";
 import type { EmailResult } from "@/lib/resend-email";
 import { isValidEmail } from "@/lib/sanitize";
+import { formError, isValidPhone, verifyFormProtection } from "@/lib/form-protection";
 
 export async function GET(request: NextRequest) {
   try {
@@ -117,7 +118,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) return formError("Format formulir tidak valid.");
     const {
       namaDebitur,
       email,
@@ -166,6 +168,15 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    if (typeof namaDebitur !== "string" || namaDebitur.trim().length === 0 || namaDebitur.length > 120 ||
+        typeof email !== "string") return formError("Nama atau email tidak valid.");
+    if (!isValidPhone(nomorTelepon) || !isValidPhone(nomorHpPasangan)) {
+      return formError("Masukkan nomor HP dan kontak darurat yang valid (8–15 digit).");
+    }
+    if (persetujuan !== true) return formError("Harap setujui syarat dan ketentuan terlebih dahulu.");
+    const blocked = await verifyFormProtection(body, "application");
+    if (blocked) return blocked;
 
     // Generate application ID: AGC-YYYYMMDD-XXXXXX
     const now = new Date();

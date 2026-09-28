@@ -137,7 +137,13 @@ async function main() {
       assert.equal(fetchCalls.length, count, "invalid CC must not reach the provider");
     }
 
-    const contactPost = load("app/api/contact/route.ts").POST;
+    // Transport regression tests isolate the guard; check-form-protection.cjs exercises the real guard.
+    const protectionMock = {
+      ...load("lib/form-validation.ts"),
+      formError: (error, status = 400) => Response.json({ success: false, error }, { status }),
+      verifyFormProtection: async () => null,
+    };
+    const contactPost = load("app/api/contact/route.ts", { "@/lib/form-protection": protectionMock }).POST;
     const contactRequest = (overrides = {}) => new NextRequest("http://localhost/api/contact", {
       method: "POST",
       body: JSON.stringify({
@@ -179,6 +185,7 @@ async function main() {
     let inserts = 0,
       sends = 0;
     const post = load("app/api/applications/route.ts", {
+      "@/lib/form-protection": protectionMock,
       "@/lib/database": {
         query: async (sql, values) => {
           assert(sql.includes("INSERT INTO applications"));
@@ -214,6 +221,9 @@ async function main() {
             namaDebitur: "<Example>",
             email: "customer@example.invalid",
             jumlahPinjaman: 100000000,
+            nomorTelepon: "081234567890",
+            nomorHpPasangan: "081234567891",
+            persetujuan: true,
           }),
         }),
       );

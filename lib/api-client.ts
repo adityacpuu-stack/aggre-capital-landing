@@ -67,6 +67,13 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
+      if (response.status === 429) {
+        throw {
+          success: false,
+          error: "Terlalu banyak kiriman. Tunggu beberapa menit sebelum mencoba lagi.",
+          status: 429,
+        } as ApiError;
+      }
       const data = await response.json();
 
       if (!response.ok) {

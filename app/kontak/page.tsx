@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import FormProtection from "@/components/FormProtection";
+import { isValidPhone } from "@/lib/form-validation";
 import PublicPage from "@/components/PublicPage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +24,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function KontakPage() {
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [website, setWebsite] = useState("");
+  const [verificationReset, setVerificationReset] = useState(0);
+  const [submitError, setSubmitError] = useState("");
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
@@ -40,6 +46,17 @@ export default function KontakPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    if (!isValidPhone(formData.nomor)) {
+      setSubmitError("Masukkan nomor telepon yang valid (8–15 digit).");
+      setSubmitStatus("error");
+      return;
+    }
+    if (!turnstileToken) {
+      setSubmitError("Selesaikan verifikasi keamanan sebelum mengirim pesan.");
+      setSubmitStatus("error");
+      return;
+    }
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
@@ -52,6 +69,8 @@ export default function KontakPage() {
           email: formData.email,
           phone: formData.nomor,
           message: formData.pesan,
+          turnstileToken,
+          website,
         }),
       });
 
@@ -59,11 +78,16 @@ export default function KontakPage() {
         setSubmitStatus("success");
         setFormData({ nama: "", email: "", nomor: "", pesan: "" });
       } else {
+        const result = await response.json().catch(() => null);
+        setSubmitError(response.status === 429 ? "Terlalu banyak kiriman. Tunggu beberapa menit sebelum mencoba lagi." : result?.error || "Gagal mengirim pesan. Silakan coba lagi atau hubungi kami langsung.");
         setSubmitStatus("error");
       }
     } catch {
+      setSubmitError("Koneksi terputus. Silakan coba lagi atau hubungi kami langsung.");
       setSubmitStatus("error");
     } finally {
+      setTurnstileToken("");
+      setVerificationReset((value) => value + 1);
       setIsSubmitting(false);
     }
   };
@@ -133,6 +157,7 @@ export default function KontakPage() {
                 </Label>
                 <Input
                   id="nama"
+                  maxLength={120}
                   value={formData.nama}
                   onChange={(e) => handleInputChange("nama", e.target.value)}
                   className="mt-2"
@@ -149,6 +174,10 @@ export default function KontakPage() {
                 </Label>
                 <Input
                   id="nomor"
+                  type="tel"
+                  inputMode="tel"
+                  maxLength={30}
+                  title="Gunakan nomor telepon 8–15 digit, misalnya 081234567890 atau +62 812 3456 7890."
                   value={formData.nomor}
                   onChange={(e) => handleInputChange("nomor", e.target.value)}
                   className="mt-2"
@@ -168,6 +197,7 @@ export default function KontakPage() {
               <Input
                 id="email"
                 type="email"
+                maxLength={254}
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className="mt-2"
@@ -185,6 +215,7 @@ export default function KontakPage() {
               </Label>
               <Textarea
                 id="pesan"
+                maxLength={5000}
                 value={formData.pesan}
                 onChange={(e) => handleInputChange("pesan", e.target.value)}
                 className="mt-2"
@@ -207,15 +238,15 @@ export default function KontakPage() {
                 role="alert"
                 className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
               >
-                Gagal mengirim pesan. Silakan coba lagi atau hubungi kami
-                langsung.
+                {submitError}
               </div>
             )}
 
+            <FormProtection action="contact" onToken={setTurnstileToken} resetKey={verificationReset} website={website} onWebsite={setWebsite} />
             <Button
               type="submit"
               size="lg"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !turnstileToken}
               className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white py-3 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
             >
               <Send className="mr-2 h-5 w-5" />

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import FormProtection from "@/components/FormProtection";
+import { isValidPhone } from "@/lib/form-validation";
 import PublicPage from "@/components/PublicPage";
 import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function PengajuanPage() {
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [website, setWebsite] = useState("");
+  const [verificationReset, setVerificationReset] = useState(0);
   const [formData, setFormData] = useState({
     namaDebitur: "",
     email: "",
@@ -108,6 +113,7 @@ export default function PengajuanPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     // Validate required fields with specific messages
     const missingFields = [];
@@ -165,12 +171,22 @@ export default function PengajuanPage() {
       return;
     }
 
+    if (!isValidPhone(formData.nomorHP) || !isValidPhone(formData.nomorHPPasangan)) {
+      setSubmitStatus({ type: "error", message: "Masukkan nomor HP dan kontak darurat yang valid (8–15 digit)." });
+      return;
+    }
+    if (!turnstileToken) {
+      setSubmitStatus({ type: "error", message: "Selesaikan verifikasi keamanan sebelum mengirim pengajuan." });
+      return;
+    }
     setIsSubmitting(true);
     setSubmitStatus(null);
 
     try {
       // Map form data to API format
       const applicationData = {
+        turnstileToken,
+        website,
         namaDebitur: formData.namaDebitur,
         email: formData.email,
         nomorTelepon: formData.nomorHP,
@@ -256,6 +272,8 @@ export default function PengajuanPage() {
         message: errorMessage,
       });
     } finally {
+      setTurnstileToken("");
+      setVerificationReset((value) => value + 1);
       setIsSubmitting(false);
     }
   };
@@ -395,6 +413,9 @@ export default function PengajuanPage() {
                     </Label>
                     <Input
                       id="nomorHP"
+                      type="tel"
+                      inputMode="tel"
+                      maxLength={30}
                       value={formData.nomorHP}
                       onChange={(e) =>
                         handleInputChange("nomorHP", e.target.value)
@@ -589,6 +610,9 @@ export default function PengajuanPage() {
                     </Label>
                     <Input
                       id="nomorHPPasangan"
+                      type="tel"
+                      inputMode="tel"
+                      maxLength={30}
                       value={formData.nomorHPPasangan}
                       onChange={(e) =>
                         handleInputChange("nomorHPPasangan", e.target.value)
@@ -870,11 +894,12 @@ export default function PengajuanPage() {
             )}
 
             {/* Submit Button */}
+            <FormProtection action="application" onToken={setTurnstileToken} resetKey={verificationReset} website={website} onWebsite={setWebsite} />
             <div className="ac-submit-row">
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-12 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none transition-all duration-300"
               >
                 {isSubmitting ? (
