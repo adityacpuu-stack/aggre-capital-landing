@@ -3,7 +3,7 @@ import { createPageMetadata } from "@/lib/site-metadata";
 export const metadata = createPageMetadata({
   title: "Berita & Liputan Media",
   description:
-    "Liputan AGGRE CAPITAL di Waspada.id, Investor.id, dan CNBC Indonesia, serta berita perusahaan dan wawasan seputar akses pembiayaan.",
+    "Berita dan liputan AGGRE CAPITAL: kegiatan Aggre Charity, penghargaan, serta wawasan pembiayaan dari Kompasiana, Waspada.id, Investor.id, dan CNBC Indonesia.",
   path: "/news",
   keywords: [
     "berita fintech indonesia",

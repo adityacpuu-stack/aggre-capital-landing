@@ -3,7 +3,7 @@
 .heading h2 { color: #153f32; font-size: clamp(1.9rem, 3vw, 2.5rem); font-weight: 500; line-height: 1.2; letter-spacing: -0.035em; }
 .heading p { margin-top: 16px; color: #62736a; line-height: 1.7; }
 .allLink { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; padding-block: 10px; color: #153f32; }
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .card { display: flex; flex-direction: column; padding: 28px; background: #f2f6ef; border: 1px solid #dce5dd; border-radius: 6px; }
 .source { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #cddbc9; color: #153f32; font-size: 1.25rem; font-weight: 600; }
 .source svg { flex-shrink: 0; }

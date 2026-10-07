@@ -9,7 +9,7 @@ export default function MediaCoverage({ showAllLink = false }: { showAllLink?: b
       <div className={s.heading}>
         <div>
           <h2 id="media-title">AGGRE CAPITAL dalam media.</h2>
-          <p>Liputan penghargaan dan dialog seputar akses pembiayaan.</p>
+          <p>Kegiatan sosial, penghargaan, dan dialog seputar akses pembiayaan.</p>
         </div>
         {showAllLink && (
           <Link href="/news" className={s.allLink}>

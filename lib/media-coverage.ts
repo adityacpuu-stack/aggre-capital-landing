@@ -1,6 +1,17 @@
-// Curated external coverage, verified against the publishers on 15 September 2026.
+// Curated external coverage; the Kompasiana entry was verified on 7 October 2026.
 // These are source links with short summaries, not locally republished articles.
 export const mediaCoverage = [
+  {
+    id: "aggre-charity-sayap-ibu-2026",
+    source: "Kompasiana",
+    title: "Aggre Charity Salurkan Tali Asih untuk Operasional Yayasan Sayap Ibu",
+    summary:
+      "Melalui Aggre Charity, AGGRE CAPITAL menyerahkan bantuan Rp10 juta pada 18 September 2026 untuk menunjang operasional dan pengasuhan anak di Yayasan Sayap Ibu.",
+    date: "2026-10-02",
+    dateLabel: "2 Oktober 2026",
+    type: "Artikel",
+    href: "https://www.kompasiana.com/diahpitalokamargareta8296/6abfad0f34777c6c942fecb3/aggre-charity-salurkan-tali-asih-untuk-operasional-yayasan-sayap-ibu",
+  },
   {
     id: "pimred-award-2026",
     source: "Waspada.id",
@@ -36,4 +47,4 @@ export const mediaCoverage = [
   },
 ] as const;
 
-export const awardCoverage = mediaCoverage[0];
+export const awardCoverage = mediaCoverage.find((item) => item.id === "pimred-award-2026")!;
