@@ -37,14 +37,22 @@ export function getCookiePreferences(): CookiePreferences {
 
 export function saveCookiePreferences(prefs: CookiePreferences) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // Storage can be denied or full. An optional preference must not crash the page.
+  }
   // Dispatch event so other components can react
   window.dispatchEvent(new Event("cookiePreferencesUpdated"));
 }
 
 export function hasConsented(): boolean {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem(STORAGE_KEY) !== null;
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
 }
 
 export default function CookieConsent() {
